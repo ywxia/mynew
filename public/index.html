@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>r.jina.ai 读网页</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>📰 r.jina.ai 网页提取器</h1>
+    </header>
+
+    <main>
+      <!-- 新增：认证区容器 -->
+      <section id="auth-section"></section>
+
+      <form id="fetch-form">
+        <input
+          id="url-input"
+          type="url"
+          placeholder="输入要抓取的 URL，例如 https://example.com"
+          required
+        />
+        <button id="btn-fetch" type="submit">获取内容</button>
+      </form>
+
+      <!-- 将附加文本区移到这里 -->
+      <section id="extra-section">
+        <label for="extra-input" class="extra-label">附加文本：</label>
+        <!-- extraInput textarea 由 main.js 动态插入 -->
+      </section>
+
+      <section id="controls" hidden>
+        <button id="btn-copy">复制文本</button>
+        <button id="btn-clear">清空</button>
+      </section>
+
+      <section id="output-wrapper">
+        <pre id="output" placeholder="网页内容将在这里显示"></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>Powered by <a href="https://r.jina.ai/" target="_blank">r.jina.ai</a></p>
+    </footer>
+
+    <script src="main.js"></script>
+  </body>
+</html>

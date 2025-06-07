@@ -1,0 +1,196 @@
+/* Reset & 轻量 mobile-first 布局 */
+:root {
+  --gap: 1rem;
+  --radius: 0.6rem;
+  --primary: #0066ff;
+  --bg: #f7f9fc;
+  --border: #e0e6ed;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  line-height: 1.5;
+  color: #222;
+}
+
+header,
+footer {
+  text-align: center;
+  padding: var(--gap);
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap);
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px #0001;
+}
+
+form {
+  display: flex;
+  gap: var(--gap);
+  margin-bottom: 0.5em;
+}
+
+input[type='url'] {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+button {
+  padding: 0.6rem 0.9rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#auth-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.auth-div {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background: #f3f6fa;
+  border-radius: var(--radius);
+  padding: 0.5em 1em;
+  box-shadow: 0 1px 4px #0001;
+}
+
+#auth-password {
+  padding: 0.5em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95em;
+}
+
+#auth-login {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5em 1.2em;
+  font-size: 0.95em;
+  cursor: pointer;
+}
+
+#auth-status {
+  min-width: 4em;
+  font-size: 0.95em;
+  font-weight: bold;
+}
+
+#controls {
+  display: flex;
+  gap: var(--gap);
+  margin-bottom: 0.5em;
+}
+
+#btn-copy, #btn-clear {
+  min-width: 90px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+#output-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #f9fbfe;
+  margin-bottom: 0.5em;
+}
+
+#output {
+  margin: 0;
+  padding: var(--gap);
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.95rem;
+  min-height: 120px;
+}
+
+#extra-section {
+  margin-top: 0.5em;
+  background: #f3f6fa;
+  border-radius: var(--radius);
+  padding: 0.7em 1em 1em 1em;
+  box-shadow: 0 1px 4px #0001;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.extra-label {
+  font-weight: bold;
+  color: #0066ff;
+  margin-bottom: 0.2em;
+  font-size: 1em;
+}
+
+#extra-input {
+  font-size: 0.98em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6em;
+  background: #fff;
+  resize: vertical;
+  min-height: 60px;
+  box-sizing: border-box;
+}
+
+/* 响应式优化 */
+@media (max-width: 600px) {
+  main {
+    max-width: 100%;
+    padding: 0.5em;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  #auth-section, .auth-div, #extra-section {
+    padding: 0.5em;
+  }
+  #output {
+    font-size: 0.9em;
+    padding: 0.5em;
+  }
+}

@@ -7,6 +7,35 @@ const controls = document.getElementById('controls');
 const output = document.getElementById('output');
 let rawMarkdown = ''; // 保存原始 markdown
 
+// --- 状态持久化 ---
+const saveState = () => {
+  const state = {
+    url: urlInput.value,
+    rawMarkdown,
+    output: output.innerHTML,
+    extra: extraInput ? extraInput.value : '',
+    controlsVisible: !controls.hidden
+  };
+  localStorage.setItem('indexState', JSON.stringify(state));
+};
+
+const loadState = () => {
+  try {
+    const state = JSON.parse(localStorage.getItem('indexState') || '{}');
+    if (state.url) urlInput.value = state.url;
+    if (state.extra !== undefined && extraInput) extraInput.value = state.extra;
+    if (state.rawMarkdown) {
+      rawMarkdown = state.rawMarkdown;
+      output.innerHTML = window.marked
+        ? window.marked.parse(rawMarkdown)
+        : rawMarkdown;
+      controls.hidden = !state.controlsVisible;
+      output.style.whiteSpace = 'pre-wrap';
+      output.style.wordBreak = 'break-all';
+    }
+  } catch {}
+};
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   // 检查本地 token
@@ -40,9 +69,11 @@ form.addEventListener('submit', async (e) => {
     output.style.whiteSpace = 'pre-wrap';
     output.style.wordBreak = 'break-all';
     controls.hidden = false;
+    saveState();
   } catch (err) {
     output.innerHTML = `❌ 出错：${err.message}`;
     rawMarkdown = '';
+    saveState();
   } finally {
     btnFetch.disabled = false;
   }
@@ -81,6 +112,7 @@ btnClear.addEventListener('click', () => {
   }
   output.style.whiteSpace = 'pre-wrap';
   output.style.wordBreak = 'break-all';
+  saveState();
 });
 
 // 新增：附加文本输入框
@@ -105,6 +137,13 @@ if (!extraInput) {
     output.parentNode.insertBefore(extraInput, output.nextSibling);
   }
 }
+
+// 输入内容变化时保存状态
+urlInput.addEventListener('input', saveState);
+if (extraInput) extraInput.addEventListener('input', saveState);
+
+// 页面加载时恢复状态
+loadState();
 
 // 常用网页下拉列表跳转功能
 const siteSelect = document.getElementById('site-select');

@@ -36,7 +36,8 @@ ytForm.addEventListener('submit', async (e) => {
     if (!res.ok) {
       let msg = '请求失败';
       try {
-        const data = await res.json();
+        const clone = res.clone();
+        const data = await clone.json();
         msg = data.error || msg;
       } catch {
         msg = await res.text();

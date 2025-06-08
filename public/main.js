@@ -5,6 +5,7 @@ const btnCopy = document.getElementById('btn-copy');
 const btnClear = document.getElementById('btn-clear');
 const controls = document.getElementById('controls');
 const output = document.getElementById('output');
+let rawMarkdown = ''; // 保存原始 markdown
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -14,7 +15,7 @@ form.addEventListener('submit', async (e) => {
     alert('请先在“身份验证”页面登录');
     return;
   }
-  output.textContent = '⏳ 正在加载...';
+  output.innerHTML = '⏳ 正在加载...';
   btnFetch.disabled = true;
 
   try {
@@ -34,10 +35,14 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || '请求失败');
 
-    output.textContent = data.markdown;
+    rawMarkdown = data.markdown || '';
+    output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
+    output.style.whiteSpace = 'pre-wrap';
+    output.style.wordBreak = 'break-all';
     controls.hidden = false;
   } catch (err) {
-    output.textContent = `❌ 出错：${err.message}`;
+    output.innerHTML = `❌ 出错：${err.message}`;
+    rawMarkdown = '';
   } finally {
     btnFetch.disabled = false;
   }
@@ -50,8 +55,8 @@ btnCopy.addEventListener('click', async () => {
     return;
   }
   try {
-    // 复制 output 内容 + 附加文本
-    const text = output.textContent + '\n\n' + extraInput.value;
+    // 复制 markdown 内容 + 附加文本
+    const text = rawMarkdown + '\n\n' + extraInput.value;
     await navigator.clipboard.writeText(text);
     btnCopy.textContent = '已复制 ✅';
     setTimeout(() => (btnCopy.textContent = '复制文本'), 1500);
@@ -61,7 +66,8 @@ btnCopy.addEventListener('click', async () => {
 });
 
 btnClear.addEventListener('click', () => {
-  output.textContent = '';
+  output.innerHTML = '';
+  rawMarkdown = '';
   urlInput.value = '';
   controls.hidden = true;
   urlInput.focus();
@@ -73,6 +79,8 @@ btnClear.addEventListener('click', () => {
     const d = String(now.getDate()).padStart(2, '0');
     extraInput.value = `当前时间是 ${y}年${m}月${d}日，请用简体中文深度分析和解读一下这篇文章，概括其主要内容，并起一个合适的中文标题`;
   }
+  output.style.whiteSpace = 'pre-wrap';
+  output.style.wordBreak = 'break-all';
 });
 
 // 新增：附加文本输入框

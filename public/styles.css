@@ -148,35 +148,43 @@ button:disabled {
   word-break: break-all;
   font-size: 0.95rem;
   min-height: 120px;
-}
-
-#extra-section {
-  margin-top: 0.5em;
-  background: #f3f6fa;
-  border-radius: var(--radius);
-  padding: 0.7em 1em 1em 1em;
-  box-shadow: 0 1px 4px #0001;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3em;
-}
-
-.extra-label {
-  font-weight: bold;
-  color: #0066ff;
-  margin-bottom: 0.2em;
-  font-size: 1em;
-}
-
-#extra-input {
-  font-size: 0.98em;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.6em;
+  /* markdown渲染美化 */
   background: #fff;
-  resize: vertical;
-  min-height: 60px;
+  border-radius: var(--radius);
   box-sizing: border-box;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+#output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
+  margin: 1em 0 0.5em 0;
+  font-weight: bold;
+}
+#output p {
+  margin: 0.5em 0;
+}
+#output ul, #output ol {
+  margin: 0.5em 0 0.5em 1.5em;
+}
+#output code, #output pre code {
+  background: #f3f6fa;
+  border-radius: 0.3em;
+  padding: 0.1em 0.3em;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  font-size: 0.97em;
+}
+#output pre {
+  background: #f3f6fa;
+  border-radius: 0.4em;
+  padding: 0.7em;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+#output blockquote {
+  border-left: 4px solid #e0e6ed;
+  background: #f7f9fc;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  color: #555;
 }
 
 /* 导航栏样式 */
@@ -230,6 +238,47 @@ button:disabled {
   border: 1px solid var(--border);
   padding: 0 0.7em;
   background: #fff;
+}
+
+#yt-prompt, #yt-model {
+  height: 2.6em;
+  font-size: 1em;
+}
+
+#yt-prompt {
+  font-size: 1em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0.6em;
+  background: #fff;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 3em;
+  line-height: 1.6;
+}
+
+#yt-output {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.95rem;
+  min-height: 120px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-sizing: border-box;
+  line-height: 1.7;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+#extra-input {
+  font-size: 0.95em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6em;
+  background: #fff;
+  resize: vertical;
+  min-height: 60px;
+  box-sizing: border-box;
 }
 
 /* 响应式优化 */

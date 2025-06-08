@@ -57,6 +57,21 @@ app.post('/api/auth', async (req, res) => {
   return authHandler(req, res);
 });
 
-app.listen(PORT, () =>
+// 引入 youtube 路由（ESM 动态导入）
+app.post('/api/youtube', async (req, res) => {
+  const { default: ytHandler } = await import('./api/youtube.js');
+  return ytHandler(req, res);
+});
+
+const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)
 );
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ 端口 ${PORT} 已被占用，请更换端口或关闭占用该端口的进程后重试。`);
+    process.exit(1);
+  } else {
+    throw err;
+  }
+});

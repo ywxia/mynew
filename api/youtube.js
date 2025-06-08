@@ -24,17 +24,21 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const genModel = genAI.getGenerativeModel({ model });
+    const requestOpts = { timeout: 600000 };
+    const genModel = genAI.getGenerativeModel({ model }, requestOpts);
 
     // 生成内容
-    const result = await genModel.generateContent([
-      prompt,
-      {
-        fileData: {
-          fileUri: url,
+    const result = await genModel.generateContent(
+      [
+        prompt,
+        {
+          fileData: {
+            fileUri: url,
+          },
         },
-      },
-    ]);
+      ],
+      requestOpts
+    );
     const text = result.response.text();
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');

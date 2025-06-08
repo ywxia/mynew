@@ -67,6 +67,12 @@ const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)
 );
 
+// 防止 Node 在长时间处理时自动关闭连接
+server.setTimeout(0);
+server.headersTimeout = 0;
+server.requestTimeout = 0;
+server.keepAliveTimeout = 65 * 1000;
+
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`❌ 端口 ${PORT} 已被占用，请更换端口或关闭占用该端口的进程后重试。`);

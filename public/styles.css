@@ -24,6 +24,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   color: #222;
+  padding-top: 3.2em; /* 给导航栏留出空间 */
 }
 
 header,
@@ -176,6 +177,45 @@ button:disabled {
   resize: vertical;
   min-height: 60px;
   box-sizing: border-box;
+}
+
+/* 导航栏样式 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 100;
+  background: #f3f6fa;
+  padding: 0.7em 1em;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1.2em;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.nav-link {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1em;
+  padding: 0.2em 0.7em;
+  border-radius: 0.4em;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: #e0e6ed;
+  color: #003366;
+}
+
+.nav-auth {
+  margin-left: auto;
+  color: #ff6600;
+  font-weight: bold;
 }
 
 /* 响应式优化 */

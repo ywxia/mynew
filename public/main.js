@@ -6,90 +6,12 @@ const btnClear = document.getElementById('btn-clear');
 const controls = document.getElementById('controls');
 const output = document.getElementById('output');
 
-// ====== 新增：身份密码认证 ======
-let authToken = localStorage.getItem('authToken') || '';
-let isAuthed = false;
-
-// 创建密码输入框和登录按钮
-const authDiv = document.createElement('div');
-authDiv.className = 'auth-div';
-authDiv.innerHTML = `
-  <input type="password" id="auth-password" placeholder="请输入密码" style="width:180px;" />
-  <button id="auth-login">登录</button>
-  <span id="auth-status" style="color:red;margin-left:1em;"></span>
-`;
-// 插入到 auth-section
-const authSection = document.getElementById('auth-section');
-if (authSection) {
-  authSection.appendChild(authDiv);
-} else {
-  document.body.insertBefore(authDiv, document.body.firstChild);
-}
-
-const authInput = document.getElementById('auth-password');
-const authBtn = document.getElementById('auth-login');
-const authStatus = document.getElementById('auth-status');
-
-// 禁用主功能区
-function setControlsEnabled(enabled) {
-  urlInput.disabled = !enabled;
-  btnFetch.disabled = !enabled;
-  btnCopy.disabled = !enabled;
-  btnClear.disabled = !enabled;
-  if (!enabled) controls.hidden = true;
-}
-setControlsEnabled(false);
-
-// 登录函数
-async function tryLogin(pwd) {
-  authStatus.textContent = '正在验证...';
-  try {
-    const res = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd })
-    });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      authToken = data.token;
-      localStorage.setItem('authToken', authToken);
-      isAuthed = true;
-      authStatus.textContent = '登录成功';
-      setControlsEnabled(true);
-      authInput.disabled = true;
-      authBtn.disabled = true;
-    } else {
-      throw new Error(data.error || '密码错误');
-    }
-  } catch (e) {
-    authStatus.textContent = e.message;
-    setControlsEnabled(false);
-    isAuthed = false;
-    authToken = '';
-    localStorage.removeItem('authToken');
-  }
-}
-
-// 登录按钮事件
-authBtn.addEventListener('click', () => {
-  tryLogin(authInput.value.trim());
-});
-
-// 回车登录
-authInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') authBtn.click();
-});
-
-// 自动尝试登录
-if (authToken) {
-  // 这里假设 token 也可直接作为密码重试
-  tryLogin(authToken);
-}
-
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!isAuthed) {
-    authStatus.textContent = '请先登录';
+  // 检查本地 token
+  const authToken = localStorage.getItem('authToken') || '';
+  if (!authToken) {
+    alert('请先在“身份验证”页面登录');
     return;
   }
   output.textContent = '⏳ 正在加载...';
@@ -122,8 +44,9 @@ form.addEventListener('submit', async (e) => {
 });
 
 btnCopy.addEventListener('click', async () => {
-  if (!isAuthed) {
-    authStatus.textContent = '请先登录';
+  const authToken = localStorage.getItem('authToken') || '';
+  if (!authToken) {
+    alert('请先在“身份验证”页面登录');
     return;
   }
   try {

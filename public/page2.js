@@ -47,17 +47,9 @@ ytForm.addEventListener('submit', async (e) => {
       return;
     }
 
-    // 流式输出并拼接 markdown
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let md = '';
-    ytOutput.innerHTML = '';
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      md += decoder.decode(value, { stream: true });
-      ytOutput.innerHTML = window.marked ? window.marked.parse(md) : md;
-    }
+    // 只用一次性读取
+    const md = await res.text();
+    ytOutput.innerHTML = window.marked ? window.marked.parse(md) : md;
     rawMd = md;
   } catch (err) {
     ytOutput.innerHTML = '❌ ' + err.message;

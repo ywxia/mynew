@@ -33,7 +33,23 @@
         <button id="btn-fetch" type="submit">获取内容</button>
       </form>
 
-      <!-- 将附加文本区移到这里 -->
+      <!-- 将常用网页下拉列表和按钮移到这里 -->
+      <div
+        id="site-select-row"
+        style="display: flex; gap: 0.5em; align-items: center; margin-bottom: 0.7em"
+      >
+        <select id="site-select" class="site-select" style="flex: 1; max-width: 260px">
+          <option value="">选择常用网站</option>
+          <option value="https://chat.openai.com/">ChatGPT</option>
+          <option value="https://grok.x.com/">Grok</option>
+          <option value="https://gemini.google.com/">Gemini</option>
+          <option value="https://www.rfa.org/">路透社</option>
+          <option value="https://www.bbc.com/">BBC</option>
+        </select>
+        <button id="btn-open-site" type="button">打开网页</button>
+      </div>
+
+      <!-- 附加文本区 -->
       <section id="extra-section">
         <label for="extra-input" class="extra-label">附加文本：</label>
         <!-- extraInput textarea 由 main.js 动态插入 -->

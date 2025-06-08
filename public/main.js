@@ -97,3 +97,17 @@ if (!extraInput) {
     output.parentNode.insertBefore(extraInput, output.nextSibling);
   }
 }
+
+// 常用网页下拉列表跳转功能
+const siteSelect = document.getElementById('site-select');
+const btnOpenSite = document.getElementById('btn-open-site');
+if (siteSelect && btnOpenSite) {
+  btnOpenSite.addEventListener('click', () => {
+    const url = siteSelect.value;
+    if (url) window.open(url, '_blank');
+  });
+  // 支持直接选择后自动跳转（可选，若只需按钮跳转可删除此段）
+  // siteSelect.addEventListener('change', () => {
+  //   if (siteSelect.value) window.open(siteSelect.value, '_blank');
+  // });
+}

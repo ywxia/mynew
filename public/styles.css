@@ -223,6 +223,15 @@ button:disabled {
   font-weight: bold;
 }
 
+.site-select {
+  height: 2.6em;
+  font-size: 1em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0 0.7em;
+  background: #fff;
+}
+
 /* 响应式优化 */
 @media (max-width: 600px) {
   main {

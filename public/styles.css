@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   color: #222;
-  padding-top: 3.2em; /* 给导航栏留出空间 */
+  padding-top: 4em; /* 导航栏高度更大，避免遮盖内容 */
 }
 
 header,
@@ -210,6 +210,11 @@ button:disabled {
 .nav-link.active {
   background: #e0e6ed;
   color: #003366;
+}
+
+.nav-link.active {
+  background: #0066ff;
+  color: #fff !important;
 }
 
 .nav-auth {

@@ -208,3 +208,57 @@ if (siteSelect && btnOpenSite) {
   //   if (siteSelect.value) window.open(siteSelect.value, '_blank');
   // });
 }
+
+const blogTitleInput = document.getElementById('blog-title');
+const btnCreateBlog = document.getElementById('btn-create-blog');
+
+if (btnCreateBlog) {
+  btnCreateBlog.addEventListener('click', async () => {
+    const authToken = localStorage.getItem('authToken') || '';
+    if (!authToken) {
+      alert('请先在“身份验证”页面登录');
+      return;
+    }
+    const title = blogTitleInput.value.trim();
+    if (!title) {
+      alert('请输入博客标题');
+      blogTitleInput.focus();
+      return;
+    }
+    const content = showingAI ? aiMarkdown : rawMarkdown;
+    if (!content) {
+      alert('没有可保存的内容');
+      return;
+    }
+    btnCreateBlog.textContent = '创建中...';
+    btnCreateBlog.disabled = true;
+    try {
+      const res = await fetch('/api/blog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken
+        },
+        body: JSON.stringify({ title, content })
+      });
+      if (!res.ok) {
+        let msg = '创建失败';
+        try {
+          const data = await res.json();
+          msg = data.error || msg;
+        } catch {
+          msg = await res.text();
+        }
+        alert(msg);
+      } else {
+        alert('博客已创建，可在“博客文章”页面查看');
+        blogTitleInput.value = '';
+      }
+    } catch (err) {
+      alert('创建失败: ' + err.message);
+    } finally {
+      btnCreateBlog.textContent = '创建博客';
+      btnCreateBlog.disabled = false;
+    }
+  });
+}

@@ -69,6 +69,11 @@ app.post('/api/gemini', async (req, res) => {
   return geminiHandler(req, res);
 });
 
+app.use('/api/blog', async (req, res, next) => {
+  const { default: blogHandler } = await import('./api/blog.js');
+  return blogHandler(req, res, next);
+});
+
 const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)
 );

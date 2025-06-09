@@ -13,7 +13,7 @@
   <body>
     <nav class="navbar">
       <a href="page2.html" class="nav-link">视频处理</a>
-      <a href="page1.html" class="nav-link">子页1</a>
+      <a href="page1.html" class="nav-link">博客文章</a>
       <a href="index.html" class="nav-link active">网页提取</a>
       <a href="page3.html" class="nav-link">子页3</a>
       <a href="auth.html" class="nav-link nav-auth">身份验证</a>
@@ -56,10 +56,16 @@
       </section>
 
       <section id="controls" hidden>
-        <button id="btn-copy">复制文本</button>
-        <button id="btn-clear">清空</button>
-        <button id="btn-ai-clean" type="button">AI清理</button>
-        <button id="btn-toggle-raw" type="button" style="display:none;">切换原文/AI</button>
+        <div class="main-action-buttons">
+          <button id="btn-copy">复制文本</button>
+          <button id="btn-clear">清空</button>
+          <button id="btn-ai-clean" type="button">AI清理</button>
+          <button id="btn-toggle-raw" type="button" style="display:none;">切换原文/AI</button>
+        </div>
+        <div class="blog-creation-controls">
+          <input id="blog-title" type="text" placeholder="博客标题" class="blog-title-input" />
+          <button id="btn-create-blog" type="button">创建博客</button>
+        </div>
       </section>
 
       <section id="output-wrapper">

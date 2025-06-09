@@ -122,14 +122,42 @@ button:disabled {
 
 #controls {
   display: flex;
-  gap: var(--gap);
+  flex-direction: column; /* 主次操作分行显示 */
+  gap: 1em; /* 行间距 */
   margin-bottom: 0.5em;
+  /* flex-wrap: wrap;  不再需要，因为已分行 */
 }
 
-#btn-copy, #btn-clear {
-  min-width: 90px;
-  font-weight: 500;
-  letter-spacing: 1px;
+.main-action-buttons {
+  display: flex;
+  gap: var(--gap); /* 按钮间距 */
+  flex-wrap: wrap; /* 按钮多时可换行 */
+}
+
+.blog-creation-controls {
+  display: flex;
+  gap: 0.7em; /* 输入框和按钮间距 */
+  align-items: center;
+  padding-top: 1em; /* 与上方按钮组的间距 */
+  border-top: 1px solid var(--border); /* 分隔线 */
+  width: 100%;
+}
+
+.blog-title-input {
+  flex: 1; /* 占据剩余空间 */
+  max-width: 300px; /* 最大宽度 */
+  height: 2.6em;
+  font-size: 0.95em; /* 调整字体大小与其它按钮协调 */
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0 0.7em;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+#btn-create-blog {
+  /* 可按需调整创建博客按钮样式 */
+  padding: 0.6em 1em;
 }
 
 #output-wrapper {
@@ -282,6 +310,82 @@ button:disabled {
   background: #fff;
   resize: vertical;
   min-height: 130px; /* 原为60px，增大高度以显示两段内容 */
+  box-sizing: border-box;
+}
+
+/* 博客相关样式 */
+#blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.blog-block {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8em 1.2em;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.blog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.blog-title-text {
+  font-weight: bold;
+  font-size: 1.15em;
+  color: #222; /* 原为 var(--primary)，改为黑色 */
+  flex-grow: 1;
+}
+
+.blog-delete-icon, .blog-back-icon {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 1.1em;
+  padding: 0.3em;
+}
+.blog-delete-icon:hover {
+  color: #cc0000;
+}
+
+.blog-back-icon {
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 0.8em;
+  display: block; /* Make it a block to take full width or for margin */
+}
+.blog-back-icon:hover {
+  color: #003366;
+}
+
+.blog-detail {
+  margin-top: 0.8em;
+  padding-top: 0.8em;
+  border-top: 1px dashed var(--border);
+  line-height: 1.7;
+}
+
+.blog-detail h1, .blog-detail h2, .blog-detail h3 {
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+}
+.blog-detail p {
+  margin-bottom: 0.6em;
+}
+
+.blog-title-input {
+  height: 2.6em;
+  font-size: 1em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0 0.7em;
+  background: #fff;
   box-sizing: border-box;
 }
 

@@ -160,7 +160,7 @@ button:disabled {
   font-weight: bold;
 }
 #output p {
-  margin: 0.5em 0;
+  margin: 0.1em 0; /* 原为0.5em 0，减小段落间距 */
 }
 #output ul, #output ol {
   margin: 0.5em 0 0.5em 1.5em;
@@ -268,6 +268,10 @@ button:disabled {
   line-height: 1.7;
   overflow-x: auto;
   padding: 1em;
+}
+
+#yt-output p {
+  margin: 0.1em 0; /* 减小段落间距 */
 }
 
 #extra-input {

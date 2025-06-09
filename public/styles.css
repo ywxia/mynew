@@ -281,7 +281,7 @@ button:disabled {
   padding: 0.6em;
   background: #fff;
   resize: vertical;
-  min-height: 60px;
+  min-height: 130px; /* 原为60px，增大高度以显示两段内容 */
   box-sizing: border-box;
 }
 

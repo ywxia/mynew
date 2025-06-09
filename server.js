@@ -63,6 +63,12 @@ app.post('/api/youtube', async (req, res) => {
   return ytHandler(req, res);
 });
 
+// 引入 gemini 路由（ESM 动态导入）
+app.post('/api/gemini', async (req, res) => {
+  const { default: geminiHandler } = await import('./api/gemini.js');
+  return geminiHandler(req, res);
+});
+
 const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)
 );

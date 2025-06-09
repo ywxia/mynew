@@ -1,3 +1,5 @@
+import { getYoutubeDefaultPrompt } from './utils/defaultPrompts.js';
+
 export default function initPage2() {
 const ytForm = document.getElementById('yt-form');
 const ytUrl = document.getElementById('yt-url');
@@ -80,7 +82,63 @@ if (ytClear) {
     ytOutput.innerHTML = '';
     rawMd = '';
     ytUrl.value = '';
-    ytPrompt.value = '请用简体中文总结这段视频的主要内容和核心信息，并给视频起个标题。';
+    ytPrompt.value = getYoutubeDefaultPrompt();
+  });
+}
+
+// 新增：创建博客功能
+const ytBlogTitle = document.getElementById('yt-blog-title');
+const ytBtnCreateBlog = document.getElementById('yt-btn-create-blog');
+
+if (ytBtnCreateBlog) {
+  ytBtnCreateBlog.addEventListener('click', async () => {
+    const authToken = localStorage.getItem('authToken') || '';
+    if (!authToken) {
+      alert('请先在“身份验证”页面登录');
+      return;
+    }
+    const title = ytBlogTitle.value.trim();
+    if (!title) {
+      alert('请输入博客标题');
+      ytBlogTitle.focus();
+      return;
+    }
+    const content = rawMd;
+    if (!content) {
+      alert('没有可保存的内容');
+      return;
+    }
+    ytBtnCreateBlog.textContent = '创建中...';
+    ytBtnCreateBlog.disabled = true;
+    try {
+      const createdAt = new Date().toISOString();
+      const res = await fetch('/api/blog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken
+        },
+        body: JSON.stringify({ title, content, createdAt })
+      });
+      if (!res.ok) {
+        let msg = '创建失败';
+        try {
+          const data = await res.json();
+          msg = data.error || msg;
+        } catch {
+          msg = await res.text();
+        }
+        alert(msg);
+      } else {
+        alert('博客已创建，可在“博客文章”页面查看');
+        ytBlogTitle.value = '';
+      }
+    } catch (err) {
+      alert('创建失败: ' + err.message);
+    } finally {
+      ytBtnCreateBlog.textContent = '创建博客';
+      ytBtnCreateBlog.disabled = false;
+    }
   });
 }
 }

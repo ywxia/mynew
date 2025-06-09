@@ -1,58 +1,56 @@
-    <header>
-      <h1>📰 r.jina.ai 网页提取器</h1>
-    </header>
+<header>
+  <h1>📰 r.jina.ai 网页提取器</h1>
+</header>
 
-    <main>
-      <form id="fetch-form">
-        <input
-          id="url-input"
-          type="url"
-          placeholder="输入要抓取的 URL，例如 https://example.com"
-          required
-        />
-        <button id="btn-fetch" type="submit">获取内容</button>
-      </form>
+<main>
+  <section class="input-section">
+    <form id="fetch-form">
+      <input
+        id="url-input"
+        type="url"
+        placeholder="输入要抓取的 URL，例如 https://example.com"
+        required
+      />
+      <button id="btn-fetch" type="submit">获取内容</button>
+    </form>
 
-      <!-- 将常用网页下拉列表和按钮移到这里 -->
-      <div
-        id="site-select-row"
-        style="display: flex; gap: 0.5em; align-items: center; margin-bottom: 0.7em"
-      >
-        <select id="site-select" class="site-select" style="flex: 1; max-width: 260px">
-          <option value="">选择常用网站</option>
-          <option value="https://chatgpt.com/">ChatGPT</option>
-          <option value="https://grok.com/?referrer=website">Grok</option>
-          <option value="https://gemini.google.com/u/3/app">Gemini</option>
-          <option value="https://www.reuters.com/">路透社</option>
-          <option value="https://www.bbc.com/">BBC</option>
-        </select>
-        <button id="btn-open-site" type="button">打开网页</button>
-      </div>
+    <div class="site-select-row">
+      <select id="site-select" class="site-select">
+        <option value="">选择常用网站</option>
+        <option value="https://chatgpt.com/">ChatGPT</option>
+        <option value="https://grok.com/?referrer=website">Grok</option>
+        <option value="https://gemini.google.com/u/3/app">Gemini</option>
+        <option value="https://www.reuters.com/">路透社</option>
+        <option value="https://www.bbc.com/">BBC</option>
+      </select>
+      <button id="btn-open-site" type="button">打开网页</button>
+    </div>
+  </section>
 
-      <!-- 提示词区 -->
-      <section id="extra-section">
-        <label for="extra-input" class="extra-label">提示词：</label>
-        <!-- extraInput textarea 由 main.js 动态插入 -->
-      </section>
+  <section id="extra-section" class="prompt-section">
+    <label for="extra-input" class="section-label">提示词：</label>
+    <textarea id="extra-input" class="extra-input" rows="6"></textarea>
+  </section>
 
-      <section id="controls" hidden>
-        <div class="main-action-buttons">
-          <button id="btn-copy">复制文本</button>
-          <button id="btn-clear">清空</button>
-          <button id="btn-ai-clean" type="button">AI清理</button>
-          <button id="btn-toggle-raw" type="button" style="display:none;">切换原文/AI</button>
-        </div>
-        <div class="blog-creation-controls">
-          <input id="blog-title" type="text" placeholder="博客标题" class="blog-title-input" />
-          <button id="btn-create-blog" type="button">创建博客</button>
-        </div>
-      </section>
+  <section id="controls" class="controls-section" hidden>
+    <div class="button-group primary-actions">
+      <button id="btn-copy">复制文本</button>
+      <button id="btn-clear">清空</button>
+      <button id="btn-ai-clean">AI清理</button>
+      <button id="btn-toggle-raw" style="display:none;">切换原文/AI</button>
+    </div>
+    
+    <div class="blog-controls">
+      <input id="blog-title" type="text" placeholder="博客标题" />
+      <button id="btn-create-blog">创建博客</button>
+    </div>
+  </section>
 
-      <section id="output-wrapper">
-        <div id="output" placeholder="网页内容将在这里显示"></div>
-      </section>
-    </main>
+  <section id="output-wrapper" class="output-section">
+    <div id="output"></div>
+  </section>
+</main>
 
-    <footer>
-      <p>Powered by <a href="https://r.jina.ai/" target="_blank">r.jina.ai</a></p>
-    </footer>
+<footer>
+  <p>Powered by <a href="https://r.jina.ai/" target="_blank">r.jina.ai</a></p>
+</footer>

@@ -66,18 +66,25 @@ input[type='url'] {
 }
 
 button {
-  padding: 0.6rem 0.9rem;
+  padding: 0.6em 0.9em; /* 恢复一个更通用的 padding */
   background: var(--primary);
   color: #fff;
   border: none;
   border-radius: var(--radius);
   font-size: 0.9rem;
   cursor: pointer;
+  /* 移除 transform，因为它可能不适用于所有按钮 */
+  /* transition: background 0.2s, transform 0.1s; */
+  transition: background 0.2s;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+button:hover:not(:disabled) {
+  background: #0052cc;
+  /* transform: translateY(-1px); */
+}
+
+button:active:not(:disabled) {
+  /* transform: translateY(0); */
 }
 
 #auth-section {
@@ -266,6 +273,8 @@ button:disabled {
   border: 1px solid var(--border);
   padding: 0 0.7em;
   background: #fff;
+  flex-grow: 1; /* 让下拉框占据更多可用空间 */
+  max-width: 400px; /* 可以设置一个最大宽度，防止过宽 */
 }
 
 #yt-prompt, #yt-model {
@@ -313,6 +322,103 @@ button:disabled {
   box-sizing: border-box;
 }
 
+/* 美化输入框 */
+input[type="url"],
+input[type="text"],
+select,
+textarea {
+  padding: 0.8em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95em;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.4; /* 为textarea添加合适的行高 */
+}
+
+/* 特定为网页提取页的提示词输入框调整高度 */
+#extra-input.extra-input {
+  min-height: 80px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input[type="url"]:focus,
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,102,255,0.1);
+}
+
+/* 按钮样式优化 */
+button {
+  padding: 0.8em 1.2em;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover:not(:disabled) {
+  background: #0052cc;
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 网页提取页面布局优化 */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-bottom: 1.5em;
+  background: #f9fbfe;
+  padding: 1.2em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.site-select-row {
+  display: flex;
+  gap: 0.8em;
+  align-items: center;
+}
+
+.prompt-section {
+  margin-bottom: 1.5em;
+  background: #f9fbfe;
+  padding: 1.2em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: flex; /* 使用 flex 布局来对齐标签和输入框 */
+  flex-direction: column; /* 默认纵向排列，如果需要标签在左侧，可以改为 row */
+  gap: 0.5em; /* 标签和输入框之间的间距 */
+}
+
+.section-label {
+  display: block;
+  margin-bottom: 0; /* 移除默认的 margin-bottom，由 flex gap 控制 */
+  font-weight: 500;
+  color: #444;
+  /* 如果希望标签在输入框左侧，可以取消注释下面的样式 */
+  /* flex-basis: 100px; */ /* 给标签一个固定宽度 */
+  /* margin-right: 1em; */
+  /* align-self: flex-start; */ /* 顶部对齐 */
+  /* padding-top: 0.8em; */ /* 调整垂直对齐 */
+}
+
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 1em;
+  padding-top: 1em;
+  border-top: 1px solid var(--border);
+}
+
 /* 博客相关样式 */
 #blog-list {
   display: flex;
@@ -324,84 +430,241 @@ button:disabled {
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.8em 1.2em;
+  padding: 1em 1.2em; /* 稍微调整内边距 */
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.blog-title {
+.blog-title { /* 包含标题行和日期行 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em; /* 标题和日期之间的间距 */
+}
+
+.blog-title-header { /* 标题文本和删除按钮的容器 */
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
+  align-items: center; /* 垂直居中对齐标题和删除按钮 */
+  width: 100%;
 }
 
 .blog-title-text {
   font-weight: bold;
   font-size: 1.15em;
-  color: #222; /* 原为 var(--primary)，改为黑色 */
-  flex-grow: 1;
+  color: #222;
+  flex-grow: 1; /* 允许标题文本占据尽可能多的空间 */
+  margin-right: 0.5em; /* 与删除按钮的间距 */
+  cursor: pointer; /* 保持可点击以展开 */
 }
 
-.blog-delete-icon, .blog-back-icon {
+.blog-date {
+  color: #666;
+  font-size: 0.9em;
+  /* padding-bottom: 0.3em; */ /* 暂时移除下划线，看是否是它导致的问题 */
+  /* border-bottom: 1px solid #eee; */
+  text-align: left; /* 确保日期靠左对齐 */
+}
+
+.blog-delete-icon {
   background: none;
   border: none;
   color: #ff4d4f;
   cursor: pointer;
   font-size: 1.1em;
-  padding: 0.3em;
+  padding: 0.3em; /* 保持较小的 padding */
+  /* 确保它不继承通用的 button transform */
+  transform: none !important;
+  transition: color 0.2s; /* 只过渡颜色 */
+  flex-shrink: 0; /* 防止删除按钮被压缩 */
 }
 .blog-delete-icon:hover {
   color: #cc0000;
+  background: none; /* 确保 hover 时背景不变 */
 }
 
 .blog-back-icon {
-  color: var(--primary);
-  font-weight: bold;
-  margin-bottom: 0.8em;
-  display: block; /* Make it a block to take full width or for margin */
+  /* 返回按钮样式 */
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 0.3em;
+  transition: color 0.2s;
+  align-self: flex-start; /* 顶部对齐 */
 }
+
 .blog-back-icon:hover {
-  color: #003366;
+  color: #0056b3;
 }
 
 .blog-detail {
-  margin-top: 0.8em;
-  padding-top: 0.8em;
-  border-top: 1px dashed var(--border);
-  line-height: 1.7;
+  /* 博客详情样式 */
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 1.5em;
 }
 
-.blog-detail h1, .blog-detail h2, .blog-detail h3 {
-  margin-top: 0.8em;
-  margin-bottom: 0.4em;
-}
-.blog-detail p {
-  margin-bottom: 0.6em;
+.blog-content {
+  line-height: 1.6;
+  color: #333;
+  font-size: 0.95em;
+  /* 添加代码块样式 */
+  background: #f3f6fa;
+  border-radius: 0.4em;
+  padding: 1em;
+  overflow-x: auto;
+  /* 代码块外边距 */
+  margin: 1.2em 0;
 }
 
-.blog-title-input {
-  height: 2.6em;
-  font-size: 1em;
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+  margin-top: 1.2em;
+  margin-bottom: 0.8em;
+  font-weight: 500;
+  color: #111;
+}
+
+.blog-content p {
+  margin: 0.8em 0;
+  text-align: justify; /* 两端对齐 */
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 0.8em 0 0.8em 1.5em;
+}
+
+.blog-content code,
+.blog-content pre code {
+  background: #e8f0fe;
+  border-radius: 0.3em;
+  padding: 0.1em 0.3em;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  font-size: 0.97em;
+}
+
+.blog-content pre {
+  background: #e8f0fe;
+  border-radius: 0.4em;
+  padding: 0.7em;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #007bff;
+  background: #f1f8ff;
+  margin: 0.8em 0;
+  padding: 0.7em 1em;
+  color: #333;
+  font-style: italic;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  padding: 1.2em;
+  background: #f9fbfe;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  padding: 0 0.7em;
-  background: #fff;
-  box-sizing: border-box;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 1em;
 }
 
-/* 响应式优化 */
-@media (max-width: 600px) {
-  main {
-    max-width: 100%;
-    padding: 0.5em;
-    border-radius: 0;
-    box-shadow: none;
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.sidebar-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #222;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 0.4em;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.sidebar-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8em;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.sidebar-item:hover {
+  background: #f1f8ff;
+}
+
+.sidebar-link {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+.sidebar-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-meta {
+  color: #666;
+  font-size: 0.85em;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1em;
   }
-  #auth-section, .auth-div, #extra-section {
-    padding: 0.5em;
-  }
-  #output {
+
+  .nav-link {
+    padding: 0.5em 1em;
     font-size: 0.9em;
-    padding: 0.5em;
+  }
+
+  .site-select {
+    max-width: 100%;
+  }
+
+  .blog-block {
+    padding: 0.8em 1em;
+  }
+
+  .blog-title-input {
+    max-width: 100%;
+  }
+
+  #output {
+    padding: 1em;
+  }
+
+  #yt-output {
+    padding: 0.8em;
+  }
+
+  .sidebar {
+    position: relative;
+    top: auto;
+    padding: 1em;
   }
 }

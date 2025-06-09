@@ -1,3 +1,4 @@
+export default function initPage1() {
 const blogList = document.getElementById('blog-list');
 const authToken = localStorage.getItem('authToken') || '';
 
@@ -78,3 +79,4 @@ function renderBlogs(blogs) {
 }
 
 fetchBlogs();
+}

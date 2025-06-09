@@ -1,3 +1,4 @@
+export default function initAuth() {
 // 只负责身份认证
 let authToken = localStorage.getItem('authToken') || '';
 let isAuthed = false;
@@ -53,4 +54,5 @@ authInput.addEventListener('keydown', e => {
 });
 if (authToken) {
   tryLogin(authToken);
+}
 }

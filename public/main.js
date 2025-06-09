@@ -1,3 +1,4 @@
+export default function initHome() {
 const form = document.getElementById('fetch-form');
 const urlInput = document.getElementById('url-input');
 const btnFetch = document.getElementById('btn-fetch');
@@ -261,4 +262,5 @@ if (btnCreateBlog) {
       btnCreateBlog.disabled = false;
     }
   });
+}
 }

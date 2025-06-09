@@ -1,3 +1,4 @@
+export default function initPage2() {
 const ytForm = document.getElementById('yt-form');
 const ytUrl = document.getElementById('yt-url');
 const ytPrompt = document.getElementById('yt-prompt');
@@ -81,4 +82,5 @@ if (ytClear) {
     ytUrl.value = '';
     ytPrompt.value = '请用简体中文总结这段视频的主要内容和核心信息，并给视频起个标题。';
   });
+}
 }

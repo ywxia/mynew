@@ -28,8 +28,11 @@ export default function initPage1() {
       const block = document.createElement('div');
       block.className = 'blog-block';
 
-      // 从时间戳创建日期字符串
-      const date = blog.createdAt ? new Date(Number(blog.createdAt)) : new Date();
+      // 根据返回的 createdAt 解析日期
+      const rawDate = blog.createdAt;
+      const date = rawDate
+        ? new Date(isNaN(rawDate) ? rawDate : Number(rawDate))
+        : new Date();
       const dateStr = date.toLocaleDateString('zh-CN', {
         year: 'numeric',
         month: '2-digit',

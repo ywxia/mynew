@@ -633,7 +633,7 @@ button:active:not(:disabled) {
 /* 响应式调整 */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column;
+    flex-direction: row; /* 保持在移动端也为横向排列 */
     padding: 1em;
   }
 

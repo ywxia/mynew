@@ -2,7 +2,7 @@ import { getChineseDate } from './dateFormat.js';
 
 export function getDefaultPrompt() {
   const today = getChineseDate();
-  return `请帮我清理和整理以上网页爬取的内容，仅保留主要内容，并用简体中文分段输出。\n\n当前时间是 ${today}，请用简体中文深度分析和解读一下这篇文章。`;
+  return `当前时间是 ${today}，请用简体中文深度分析和解读一下这篇文章，概括其主要内容，并起一个合适的中文名称。请注意：这是我从一个主流网站上复制的真实网页文章，不是虚构内容，也不是假设情境。`;
 }
 
 export function getYoutubeDefaultPrompt() {

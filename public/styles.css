@@ -190,6 +190,11 @@ button:active:not(:disabled) {
   line-height: 1.7;
   overflow-x: auto;
 }
+
+#output[contenteditable='true'] {
+  outline: 2px dashed var(--primary);
+  min-height: 120px;
+}
 #output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
   margin: 1em 0 0.5em 0;
   font-weight: bold;

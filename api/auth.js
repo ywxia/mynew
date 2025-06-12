@@ -7,7 +7,7 @@ const handler = async (req, res) => {
     return;
   }
   const { password } = req.body;
-  if (password === process.env.AUTH_PASSWORD) {
+  if (String(password) === process.env.AUTH_PASSWORD) {
     // 简单返回 token（实际可用 JWT 或其它方式）
     res.status(200).json({ token: password });
   } else {

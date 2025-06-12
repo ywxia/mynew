@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   // 简单认证
   const auth = req.headers.authorization || '';
   const token = auth.replace(/^Bearer\s+/i, '');
-  if (!token || token !== process.env.AUTH_PASSWORD) {
+  if (!token || String(token) !== process.env.AUTH_PASSWORD) {
     res.status(401).json({ error: '未授权，请先登录' });
     return;
   }

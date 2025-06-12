@@ -190,6 +190,18 @@ button:active:not(:disabled) {
   line-height: 1.7;
   overflow-x: auto;
 }
+
+#output-editor {
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  min-height: 120px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  box-sizing: border-box;
+  resize: vertical;
+}
 #output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
   margin: 1em 0 0.5em 0;
   font-weight: bold;

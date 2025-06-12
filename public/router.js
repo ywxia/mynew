@@ -4,7 +4,7 @@ const routes = {
   home: { path: 'pages/home.html', script: './main.js' },
   page1: { path: 'pages/page1.html', script: './page1.js' },
   page2: { path: 'pages/page2.html', script: './page2.js' },
-  page3: { path: 'pages/page3.html', script: null },
+  page3: { path: 'pages/page3.html', script: './page3.js' },
   auth: { path: 'pages/auth.html', script: './auth.js' }
 };
 

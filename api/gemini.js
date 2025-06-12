@@ -3,6 +3,12 @@ dotenv.config();
 
 import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
 
+const ALLOWED_MODELS = [
+  'gemini-2.5-pro-preview-06-05',
+  'gemini-2.5-flash-preview-05-20'
+];
+const DEFAULT_MODEL = ALLOWED_MODELS[0];
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
@@ -36,7 +42,7 @@ export default async function handler(req, res) {
       ],
       responseMimeType: 'text/plain',
     };
-    const useModel = model || 'gemini-2.5-pro-preview-06-05';
+    const useModel = ALLOWED_MODELS.includes(model) ? model : DEFAULT_MODEL;
     const contents = [
       { role: 'user', parts: [{ text: prompt }] }
     ];

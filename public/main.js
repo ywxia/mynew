@@ -16,6 +16,7 @@ export default function initHome() {
   const siteSelect = document.getElementById('site-select');
   const btnOpenSite = document.getElementById('btn-open-site');
   const btnAIClean = document.getElementById('btn-ai-clean');
+  const aiModelSelect = document.getElementById('ai-model');
   const btnToggleRaw = document.getElementById('btn-toggle-raw');
 
   let rawMarkdown = '';
@@ -58,7 +59,8 @@ export default function initHome() {
             'Authorization': 'Bearer ' + authToken
           },
           body: JSON.stringify({
-            prompt: userInput
+            prompt: userInput,
+            model: aiModelSelect ? aiModelSelect.value : undefined
           })
         });
         if (!res.ok) {

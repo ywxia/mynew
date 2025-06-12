@@ -277,7 +277,17 @@ button:active:not(:disabled) {
   max-width: 400px; /* 可以设置一个最大宽度，防止过宽 */
 }
 
-#yt-prompt, #yt-model {
+.model-select {
+  height: 2.6em;
+  font-size: 1em;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0 0.7em;
+  background: #fff;
+  max-width: 400px;
+}
+
+#yt-prompt, #yt-model, #ai-model {
   height: 2.6em;
   font-size: 1em;
 }
@@ -382,6 +392,12 @@ button:active:not(:disabled) {
 }
 
 .site-select-row {
+  display: flex;
+  gap: 0.8em;
+  align-items: center;
+}
+
+.model-select-row {
   display: flex;
   gap: 0.8em;
   align-items: center;

@@ -12,7 +12,7 @@ async function ensureDir() {
 function checkAuth(req) {
   const auth = req.headers.authorization || '';
   const token = auth.replace(/^Bearer\s+/i, '');
-  return token && token === process.env.AUTH_PASSWORD;
+  return token && String(token) === process.env.AUTH_PASSWORD;
 }
 
 export default async function handler(req, res) {

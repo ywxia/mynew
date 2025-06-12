@@ -17,10 +17,12 @@ export default function initHome() {
   const btnOpenSite = document.getElementById('btn-open-site');
   const btnAIClean = document.getElementById('btn-ai-clean');
   const btnToggleRaw = document.getElementById('btn-toggle-raw');
+  const btnEdit = document.getElementById('btn-edit');
 
   let rawMarkdown = '';
   let aiMarkdown = '';
   let showingAI = false;
+  let editing = false;
 
   // 初始化提示词输入框
   if (extraInput) {
@@ -80,6 +82,9 @@ export default function initHome() {
         output.innerHTML = window.marked ? window.marked.parse(aiMarkdown) : aiMarkdown;
         showingAI = true;
         btnToggleRaw.style.display = '';
+        output.contentEditable = 'false';
+        if (btnEdit) btnEdit.textContent = '编辑文本';
+        editing = false;
       } catch (err) {
         output.innerHTML = '❌ ' + err.message;
         aiMarkdown = '';
@@ -93,6 +98,10 @@ export default function initHome() {
   // 切换原文/AI按钮事件
   if (btnToggleRaw) {
     btnToggleRaw.addEventListener('click', () => {
+      if (editing) {
+        // 如果正在编辑，先退出编辑模式
+        btnEdit.click();
+      }
       if (showingAI) {
         output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
         showingAI = false;
@@ -101,6 +110,28 @@ export default function initHome() {
         output.innerHTML = window.marked ? window.marked.parse(aiMarkdown) : aiMarkdown;
         showingAI = true;
         btnToggleRaw.textContent = '切换原文/AI';
+      }
+    });
+  }
+
+  // 编辑文本按钮事件
+  if (btnEdit) {
+    btnEdit.addEventListener('click', () => {
+      if (!editing) {
+        output.contentEditable = 'true';
+        output.focus();
+        btnEdit.textContent = '保存';
+        editing = true;
+      } else {
+        const newText = output.textContent;
+        if (showingAI) {
+          aiMarkdown = newText;
+        } else {
+          rawMarkdown = newText;
+        }
+        output.contentEditable = 'false';
+        btnEdit.textContent = '编辑文本';
+        editing = false;
       }
     });
   }
@@ -142,6 +173,9 @@ export default function initHome() {
         aiMarkdown = '';
         showingAI = false;
         btnToggleRaw.style.display = 'none';
+        output.contentEditable = 'false';
+        if (btnEdit) btnEdit.textContent = '编辑文本';
+        editing = false;
       } catch (err) {
         output.innerHTML = `❌ 出错：${err.message}`;
         rawMarkdown = '';
@@ -160,7 +194,11 @@ export default function initHome() {
       }
       try {
         // 复制当前显示内容（不加提示词）
-        const text = showingAI ? aiMarkdown : rawMarkdown;
+        const text = editing
+          ? output.textContent
+          : showingAI
+            ? aiMarkdown
+            : rawMarkdown;
         await navigator.clipboard.writeText(text);
         btnCopy.textContent = '已复制 ✅';
         setTimeout(() => (btnCopy.textContent = '复制文本'), 1500);
@@ -187,6 +225,9 @@ export default function initHome() {
         btnToggleRaw.style.display = 'none'; // 隐藏切换按钮
         btnToggleRaw.textContent = '切换原文/AI';
       }
+      output.contentEditable = 'false';
+      if (btnEdit) btnEdit.textContent = '编辑文本';
+      editing = false;
       if (blogTitleInput) {
         blogTitleInput.value = ''; // 清空博客标题
       }
@@ -218,7 +259,11 @@ export default function initHome() {
         blogTitleInput.focus();
         return;
       }
-      const content = showingAI ? aiMarkdown : rawMarkdown;
+      const content = editing
+        ? output.textContent
+        : showingAI
+          ? aiMarkdown
+          : rawMarkdown;
       if (!content) {
         alert('没有可保存的内容');
         return;

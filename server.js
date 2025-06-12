@@ -69,6 +69,12 @@ app.post('/api/gemini', async (req, res) => {
   return geminiHandler(req, res);
 });
 
+// 引入 openai 路由（ESM 动态导入）
+app.post('/api/openai', async (req, res) => {
+  const { default: openaiHandler } = await import('./api/openai.js');
+  return openaiHandler(req, res);
+});
+
 app.use('/api/blog', async (req, res, next) => {
   const { default: blogHandler } = await import('./api/blog.js');
   return blogHandler(req, res, next);

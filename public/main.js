@@ -52,7 +52,9 @@ export default function initHome() {
         // 从提示词输入框获取
         const extraPrompt = extraInput.value || '';
         const userInput = rawMarkdown + '\n\n' + extraPrompt;
-        const res = await fetch('/api/gemini', {
+        const modelValue = aiModelSelect ? aiModelSelect.value : '';
+        const endpoint = modelValue.startsWith('gpt-') ? '/api/openai' : '/api/gemini';
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +62,7 @@ export default function initHome() {
           },
           body: JSON.stringify({
             prompt: userInput,
-            model: aiModelSelect ? aiModelSelect.value : undefined
+            model: modelValue || undefined
           })
         });
         if (!res.ok) {

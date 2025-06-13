@@ -58,7 +58,7 @@ export default function initHome() {
       try {
         const authToken = localStorage.getItem('authToken') || '';
         if (!authToken) {
-          throw new Error('请先在“身份验证”页面登录');
+          throw new Error('请先登录后再操作');
         }
         const extraPrompt = extraInput.value || '';
         
@@ -141,7 +141,7 @@ export default function initHome() {
       // 检查本地 token
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先在“身份验证”页面登录');
+        alert('请先登录后再操作');
         return;
       }
       output.innerHTML = '⏳ 正在加载...';
@@ -188,7 +188,7 @@ export default function initHome() {
     btnCopy.addEventListener('click', async () => {
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先在“身份验证”页面登录');
+        alert('请先登录后再操作');
         return;
       }
       try {
@@ -248,7 +248,7 @@ export default function initHome() {
     btnCreateBlog.addEventListener('click', async () => {
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先在“身份验证”页面登录');
+        alert('请先登录后再操作');
         return;
       }
       const title = blogTitleInput.value.trim();

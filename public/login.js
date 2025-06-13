@@ -1,7 +1,7 @@
-export default function initAuth() {
-// 只负责身份认证
-let authToken = localStorage.getItem('authToken') || '';
-let isAuthed = false;
+export default function initLogin() {
+  // 只负责身份认证
+  let authToken = localStorage.getItem('authToken') || '';
+  let isAuthed = false;
 
 const authDiv = document.createElement('div');
 authDiv.className = 'auth-div';
@@ -18,6 +18,7 @@ if (authSection) {
 const authInput = document.getElementById('auth-password');
 const authBtn = document.getElementById('auth-login');
 const authStatus = document.getElementById('auth-status');
+const loginLink = document.querySelector('.nav-login');
 
 async function tryLogin(pwd) {
   authStatus.textContent = '正在验证...';
@@ -35,6 +36,11 @@ async function tryLogin(pwd) {
       authStatus.textContent = '登录成功';
       authInput.disabled = true;
       authBtn.disabled = true;
+      // 登录成功后隐藏登录链接并跳转主页
+      if (loginLink) loginLink.style.display = 'none';
+      setTimeout(() => {
+        location.hash = '#home';
+      }, 300);
     } else {
       throw new Error(data.error || '密码错误');
     }
@@ -56,3 +62,4 @@ if (authToken) {
   tryLogin(authToken);
 }
 }
+

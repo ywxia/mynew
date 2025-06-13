@@ -5,7 +5,7 @@ const routes = {
   page1: { path: 'pages/page1.html', script: './page1.js' },
   page2: { path: 'pages/page2.html', script: './page2.js' },
   page3: { path: 'pages/page3.html', script: './page3.js' },
-  auth: { path: 'pages/auth.html', script: './auth.js' }
+  login: { path: 'pages/login.html', script: './login.js' }
 };
 
 function getPage() {

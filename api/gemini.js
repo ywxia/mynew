@@ -22,9 +22,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { prompt, model } = req.body || {};
-  if (!prompt) {
-    res.status(400).json({ error: '参数不完整' });
+  const { messages, model } = req.body || {};
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    res.status(400).json({ error: '参数 "messages" 不完整或格式不正确' });
     return;
   }
 
@@ -43,9 +43,13 @@ export default async function handler(req, res) {
       responseMimeType: 'text/plain',
     };
     const useModel = ALLOWED_MODELS.includes(model) ? model : DEFAULT_MODEL;
-    const contents = [
-      { role: 'user', parts: [{ text: prompt }] }
-    ];
+    
+    // Transform messages to Gemini's `contents` format
+    const contents = messages.map(msg => ({
+      // Gemini uses 'model' for the assistant's role
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
 
     const response = await ai.models.generateContentStream({
       model: useModel,

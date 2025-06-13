@@ -4,9 +4,8 @@ dotenv.config();
 import OpenAI from 'openai';
 
 const ALLOWED_MODELS = [
-  'gpt-4o',
-  'gpt-4-turbo',
-  'gpt-3.5-turbo'
+  'gpt-4.1',
+  'gpt-4.1-mini'
 ];
 const DEFAULT_MODEL = ALLOWED_MODELS[0];
 
@@ -22,28 +21,39 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { prompt, model } = req.body || {};
-  if (!prompt) {
-    res.status(400).json({ error: '参数不完整' });
+  // Per the user's example, we expect a conversational history.
+  // The standard parameter name is `messages`, which we'll use.
+  const { messages, model } = req.body || {};
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    res.status(400).json({ error: '参数 "messages" 不完整或格式不正确' });
     return;
   }
 
   try {
+    // The user's example `content` format is non-standard for the OpenAI API.
+    // We will transform it to the expected string format.
+    const transformedMessages = messages.map(msg => ({
+      role: msg.role,
+      content: Array.isArray(msg.content) ? msg.content[0].text : msg.content
+    }));
+
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const useModel = ALLOWED_MODELS.includes(model) ? model : DEFAULT_MODEL;
-    const stream = await openai.chat.completions.create({
+
+    // The user's example uses a non-existent `openai.responses.create` and is non-streaming.
+    // We will use the correct `openai.chat.completions.create` method and make a non-streaming call.
+    const response = await openai.chat.completions.create({
       model: useModel,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      stream: true
+      messages: transformedMessages,
+      temperature: 1,
+      max_tokens: 2048, // Corresponds to max_output_tokens
+      top_p: 1,
     });
 
+    const result = response.choices[0]?.message?.content;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    let result = '';
-    for await (const part of stream) {
-      result += part.choices?.[0]?.delta?.content || '';
-    }
-    res.status(200).end(result);
+    res.status(200).send(result);
+
   } catch (err) {
     console.error('[OpenAI API Error]', err);
     if (!res.headersSent) {

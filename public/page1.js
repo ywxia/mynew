@@ -44,7 +44,10 @@ export default function initPage1() {
       titleDiv.innerHTML = `
         <div class="blog-title-header">
           <span class="blog-title-text">${blog.title}</span>
-          <button class="blog-delete-icon">🗑️</button>
+          <div class="blog-icons">
+            <button class="blog-copy-icon">📋</button>
+            <button class="blog-delete-icon">🗑️</button>
+          </div>
         </div>
         <div class="blog-date">${dateStr}</div>
       `;
@@ -57,6 +60,19 @@ export default function initPage1() {
       block.appendChild(detailDiv);
 
       const deleteIcon = titleDiv.querySelector('.blog-delete-icon');
+      const copyIcon = titleDiv.querySelector('.blog-copy-icon');
+
+      // 复制
+      copyIcon.onclick = async () => {
+        const textToCopy = `# ${blog.title}\n\n${blog.content}`;
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          copyIcon.textContent = '✅';
+          setTimeout(() => (copyIcon.textContent = '📋'), 1500);
+        } catch (err) {
+          alert('复制失败');
+        }
+      };
 
       // 展开/收起
       titleDiv.querySelector('.blog-title-text').onclick = () => {
@@ -68,7 +84,7 @@ export default function initPage1() {
           backButton.onclick = () => {
             detailDiv.style.display = 'none';
             detailDiv.innerHTML = ''; // Clear content
-            deleteIcon.style.display = ''; // Show delete icon
+            titleDiv.querySelector('.blog-icons').style.display = '';
           };
 
           detailDiv.innerHTML = ''; // Clear previous content
@@ -78,11 +94,11 @@ export default function initPage1() {
           detailDiv.appendChild(contentRender);
 
           detailDiv.style.display = 'block';
-          deleteIcon.style.display = 'none'; // Hide delete icon
+          titleDiv.querySelector('.blog-icons').style.display = 'none';
         } else {
           detailDiv.style.display = 'none';
           detailDiv.innerHTML = ''; // Clear content
-          deleteIcon.style.display = ''; // Show delete icon
+          titleDiv.querySelector('.blog-icons').style.display = '';
         }
       };
 

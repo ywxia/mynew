@@ -463,6 +463,13 @@ button:active:not(:disabled) {
   width: 100%;
 }
 
+.blog-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-shrink: 0;
+}
+
 .blog-title-text {
   font-weight: bold;
   font-size: 1.15em;
@@ -480,21 +487,33 @@ button:active:not(:disabled) {
   text-align: left; /* 确保日期靠左对齐 */
 }
 
-.blog-delete-icon {
+.blog-delete-icon,
+.blog-copy-icon {
   background: none;
   border: none;
-  color: #ff4d4f;
   cursor: pointer;
   font-size: 1.1em;
-  padding: 0.3em; /* 保持较小的 padding */
-  /* 确保它不继承通用的 button transform */
+  padding: 0.3em;
   transform: none !important;
-  transition: color 0.2s; /* 只过渡颜色 */
-  flex-shrink: 0; /* 防止删除按钮被压缩 */
+  transition: color 0.2s, transform 0.2s;
+}
+
+.blog-delete-icon {
+  color: #ff4d4f;
 }
 .blog-delete-icon:hover {
   color: #cc0000;
-  background: none; /* 确保 hover 时背景不变 */
+  background: none;
+  transform: scale(1.1);
+}
+
+.blog-copy-icon {
+  color: #007bff;
+}
+.blog-copy-icon:hover {
+  color: #0056b3;
+  background: none;
+  transform: scale(1.1);
 }
 
 .blog-back-icon {

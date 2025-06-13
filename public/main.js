@@ -20,8 +20,8 @@ export default function initHome() {
   const btnToggleRaw = document.getElementById('btn-toggle-raw');
 
   let rawMarkdown = '';
-  let aiMarkdown = '';
-  let showingAI = false;
+  let aiResponses = [];
+  let currentDisplayIndex = -1; // -1 for raw, 0 and up for AI responses
 
   // 初始化提示词输入框
   if (extraInput) {
@@ -39,73 +39,90 @@ export default function initHome() {
         alert('请先获取网页内容');
         return;
       }
+      // If this is the first turn of a new conversation (based on raw markdown), clear previous AI responses.
+      if (currentDisplayIndex === -1) {
+        aiResponses = [];
+      }
+
       btnAIClean.textContent = 'AI处理中...';
       btnAIClean.disabled = true;
       try {
         const authToken = localStorage.getItem('authToken') || '';
         if (!authToken) {
-          alert('请先在“身份验证”页面登录');
-          btnAIClean.textContent = 'AI清理';
-          btnAIClean.disabled = false;
-          return;
+          throw new Error('请先在“身份验证”页面登录');
         }
-        // 从提示词输入框获取
         const extraPrompt = extraInput.value || '';
-        const userInput = rawMarkdown + '\n\n' + extraPrompt;
+        
+        // Use the currently displayed content as the basis for the next conversation turn
+        let currentContent;
+        if (currentDisplayIndex === -1) {
+          currentContent = rawMarkdown;
+        } else {
+          currentContent = aiResponses[currentDisplayIndex];
+        }
+        const userInput = currentContent + '\n\n' + extraPrompt;
+
         const modelValue = aiModelSelect ? aiModelSelect.value : '';
         const endpoint = modelValue.startsWith('gpt-') ? '/api/openai' : '/api/gemini';
+        
+        const body = JSON.stringify({
+          prompt: userInput,
+          messages: [{ role: 'user', content: userInput }],
+          model: modelValue || undefined
+        });
+
         const res = await fetch(endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + authToken
-          },
-          body: JSON.stringify({
-            prompt: userInput,
-            model: modelValue || undefined
-          })
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: body
         });
+
         if (!res.ok) {
-          let msg = '请求失败';
-          try {
-            const data = await res.json();
-            msg = data.error || msg;
-          } catch {
-            msg = await res.text();
-          }
-          output.innerHTML = '❌ ' + msg;
-          aiMarkdown = '';
-          btnAIClean.textContent = 'AI清理';
-          btnAIClean.disabled = false;
-          return;
+          const data = await res.json().catch(() => ({ error: res.statusText }));
+          throw new Error(data.error || '请求失败');
         }
+
         const aiText = await res.text();
-        aiMarkdown = aiText;
-        output.innerHTML = window.marked ? window.marked.parse(aiMarkdown) : aiMarkdown;
-        showingAI = true;
-        btnToggleRaw.style.display = '';
+        aiResponses.push(aiText);
+        currentDisplayIndex = aiResponses.length - 1;
+        
+        output.innerHTML = window.marked ? window.marked.parse(aiResponses[currentDisplayIndex]) : aiResponses[currentDisplayIndex];
+        btnToggleRaw.style.display = 'inline-block';
+        updateToggleText();
+
       } catch (err) {
         output.innerHTML = '❌ ' + err.message;
-        aiMarkdown = '';
       } finally {
-        btnAIClean.textContent = 'AI清理';
+        btnAIClean.textContent = 'AI对话';
         btnAIClean.disabled = false;
       }
     });
   }
 
+  function updateToggleText() {
+    if (currentDisplayIndex === -1) {
+      btnToggleRaw.textContent = `切换版本 (原文)`;
+    } else {
+      btnToggleRaw.textContent = `切换版本 (AI ${currentDisplayIndex + 1}/${aiResponses.length})`;
+    }
+  }
+
   // 切换原文/AI按钮事件
   if (btnToggleRaw) {
     btnToggleRaw.addEventListener('click', () => {
-      if (showingAI) {
-        output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
-        showingAI = false;
-        btnToggleRaw.textContent = '切换原文/AI';
-      } else {
-        output.innerHTML = window.marked ? window.marked.parse(aiMarkdown) : aiMarkdown;
-        showingAI = true;
-        btnToggleRaw.textContent = '切换原文/AI';
+      if (aiResponses.length === 0) return;
+
+      currentDisplayIndex++;
+      if (currentDisplayIndex >= aiResponses.length) {
+        currentDisplayIndex = -1; // Loop back to raw markdown
       }
+
+      if (currentDisplayIndex === -1) {
+        output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
+      } else {
+        output.innerHTML = window.marked ? window.marked.parse(aiResponses[currentDisplayIndex]) : aiResponses[currentDisplayIndex];
+      }
+      updateToggleText();
     });
   }
 
@@ -143,9 +160,12 @@ export default function initHome() {
         output.style.whiteSpace = 'pre-wrap';
         output.style.wordBreak = 'break-all';
         controls.hidden = false;
-        aiMarkdown = '';
-        showingAI = false;
+        
+        // Reset AI responses when new content is fetched
+        aiResponses = [];
+        currentDisplayIndex = -1;
         btnToggleRaw.style.display = 'none';
+        btnAIClean.textContent = 'AI对话';
       } catch (err) {
         output.innerHTML = `❌ 出错：${err.message}`;
         rawMarkdown = '';
@@ -163,9 +183,14 @@ export default function initHome() {
         return;
       }
       try {
-        // 复制当前显示内容（不加提示词）
-        const text = showingAI ? aiMarkdown : rawMarkdown;
-        await navigator.clipboard.writeText(text);
+        // 复制当前显示内容
+        let textToCopy;
+        if (currentDisplayIndex === -1) {
+          textToCopy = rawMarkdown;
+        } else {
+          textToCopy = aiResponses[currentDisplayIndex];
+        }
+        await navigator.clipboard.writeText(textToCopy);
         btnCopy.textContent = '已复制 ✅';
         setTimeout(() => (btnCopy.textContent = '复制文本'), 1500);
       } catch {
@@ -178,8 +203,8 @@ export default function initHome() {
     btnClear.addEventListener('click', () => {
       output.innerHTML = '';
       rawMarkdown = '';
-      aiMarkdown = ''; // 清空AI内容
-      showingAI = false; // 重置显示状态
+      aiResponses = [];
+      currentDisplayIndex = -1;
       urlInput.value = '';
       controls.hidden = true;
       urlInput.focus();
@@ -188,9 +213,10 @@ export default function initHome() {
         extraInput.value = getDefaultPrompt(); // 重新设置默认提示词
       }
       if (btnToggleRaw) {
-        btnToggleRaw.style.display = 'none'; // 隐藏切换按钮
-        btnToggleRaw.textContent = '切换原文/AI';
+        btnToggleRaw.style.display = 'none';
+        btnToggleRaw.textContent = '切换版本';
       }
+      btnAIClean.textContent = 'AI对话';
       if (blogTitleInput) {
         blogTitleInput.value = ''; // 清空博客标题
       }
@@ -222,7 +248,7 @@ export default function initHome() {
         blogTitleInput.focus();
         return;
       }
-      const content = showingAI ? aiMarkdown : rawMarkdown;
+      const content = currentDisplayIndex === -1 ? rawMarkdown : aiResponses[currentDisplayIndex];
       if (!content) {
         alert('没有可保存的内容');
         return;

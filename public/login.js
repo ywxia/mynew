@@ -1,65 +1,70 @@
 export default function initLogin() {
-  // 只负责身份认证
-  let authToken = localStorage.getItem('authToken') || '';
-  let isAuthed = false;
+  const dots = document.querySelectorAll('.dot');
+  const keys = document.querySelectorAll('.key');
+  const authStatus = document.getElementById('auth-status');
+  let pin = '';
 
-const authDiv = document.createElement('div');
-authDiv.className = 'auth-div';
-authDiv.innerHTML = `
-  <input type="password" id="auth-password" placeholder="请输入密码" style="width:180px;" />
-  <button id="auth-login">登录</button>
-  <span id="auth-status" style="color:red;margin-left:1em;"></span>
-`;
-const authSection = document.getElementById('auth-section');
-if (authSection) {
-  authSection.appendChild(authDiv);
-}
-
-const authInput = document.getElementById('auth-password');
-const authBtn = document.getElementById('auth-login');
-const authStatus = document.getElementById('auth-status');
-const loginLink = document.querySelector('.nav-login');
-
-async function tryLogin(pwd) {
-  authStatus.textContent = '正在验证...';
-  try {
-    const res = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd })
+  keys.forEach(key => {
+    key.addEventListener('click', () => {
+      if (key.classList.contains('backspace')) {
+        if (pin.length > 0) {
+          pin = pin.slice(0, -1);
+        }
+      } else if (key.classList.contains('enter')) {
+        if (pin.length > 0) {
+          tryLogin(pin);
+        }
+      } else {
+        if (pin.length < dots.length) {
+          pin += key.textContent;
+        }
+      }
+      updateDots();
     });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      authToken = data.token;
-      localStorage.setItem('authToken', authToken);
-      isAuthed = true;
-      authStatus.textContent = '登录成功';
-      authInput.disabled = true;
-      authBtn.disabled = true;
-      // 登录成功后隐藏登录链接并跳转主页
-      if (loginLink) loginLink.style.display = 'none';
-      setTimeout(() => {
-        location.hash = '#home';
-      }, 300);
-    } else {
-      throw new Error(data.error || '密码错误');
+  });
+
+  function updateDots() {
+    dots.forEach((dot, index) => {
+      if (index < pin.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    });
+  }
+
+  async function tryLogin(pwd) {
+    authStatus.textContent = '正在验证...';
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('authToken', data.token);
+        authStatus.textContent = '登录成功';
+        setTimeout(() => {
+          location.hash = '#home';
+        }, 300);
+      } else {
+        throw new Error(data.error || '密码错误');
+      }
+    } catch (e) {
+      authStatus.textContent = e.message;
+      pin = '';
+      updateDots();
     }
-  } catch (e) {
-    authStatus.textContent = e.message;
-    isAuthed = false;
-    authToken = '';
-    localStorage.removeItem('authToken');
+  }
+
+  // Check for existing token on load
+  const authToken = localStorage.getItem('authToken');
+  if (authToken) {
+    // If there's a token, try to "login" with it to verify.
+    // This part of the logic might need adjustment based on how you want to handle expired tokens.
+    // For now, we assume if a token exists, we can proceed.
+    // A better approach would be a dedicated API endpoint to verify the token.
+    location.hash = '#home';
   }
 }
-
-authBtn.addEventListener('click', () => {
-  tryLogin(authInput.value.trim());
-});
-authInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') authBtn.click();
-});
-if (authToken) {
-  tryLogin(authToken);
-}
-}
-

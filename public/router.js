@@ -31,6 +31,7 @@ async function loadPage(page) {
     page = 'login';
     if (location.hash !== '#login') {
       location.hash = '#login';
+      return;
     }
   }
 
@@ -58,4 +59,5 @@ async function loadPage(page) {
 }
 
 window.addEventListener('hashchange', () => loadPage(getPage()));
-window.addEventListener('DOMContentLoaded', () => loadPage(getPage()));
+// Initial load
+loadPage(getPage());

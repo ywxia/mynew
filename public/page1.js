@@ -2,13 +2,10 @@ import { formatDate } from './utils/dateFormat.js';
 
 export default function initPage1() {
   const blogList = document.getElementById('blog-list');
-  const authToken = localStorage.getItem('authToken') || '';
 
   async function fetchBlogs() {
     try {
-      const res = await fetch('/api/blog', {
-        headers: { 'Authorization': 'Bearer ' + authToken }
-      });
+      const res = await fetch('/api/blog');
       const data = await res.json();
       console.log('获取到的博客数据:', data.blogs); // 调试用
       renderBlogs(data.blogs || []);
@@ -131,8 +128,7 @@ export default function initPage1() {
       deleteIcon.onclick = async () => {
         if (!confirm('确定要删除这篇文章吗？')) return;
         const res = await fetch(`/api/blog/${encodeURIComponent(blog.id)}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + authToken }
+          method: 'DELETE'
         });
         if (res.ok) fetchBlogs();
         else alert('删除失败');

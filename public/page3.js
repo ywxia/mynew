@@ -27,11 +27,6 @@ export default function initPage3() {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const authToken = localStorage.getItem('authToken') || '';
-    if (!authToken) {
-      alert('请先登录后再操作');
-      return;
-    }
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
     if (!title || !content) {
@@ -47,8 +42,7 @@ export default function initPage3() {
       if (isEditing) {
         // Step 1: Delete the old file
         const deleteRes = await fetch(`/api/blog/${encodeURIComponent(editingBlogId)}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + authToken }
+          method: 'DELETE'
         });
 
         if (!deleteRes.ok) {
@@ -60,8 +54,7 @@ export default function initPage3() {
         const createRes = await fetch('/api/blog', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + authToken
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ id: editingBlogId, title, content })
         });
@@ -79,8 +72,7 @@ export default function initPage3() {
         const res = await fetch('/api/blog', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + authToken
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ title, content })
         });

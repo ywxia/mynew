@@ -1,7 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const BLOG_DIR = path.resolve(process.cwd(), 'data/blogs');
 
@@ -9,18 +7,11 @@ async function ensureDir() {
   await fs.mkdir(BLOG_DIR, { recursive: true });
 }
 
-function checkAuth(req) {
-  const auth = req.headers.authorization || '';
-  const token = auth.replace(/^Bearer\s+/i, '');
-  return token && String(token) === process.env.AUTH_PASSWORD;
-}
-
 export default async function handler(req, res) {
   await ensureDir();
 
   // 新增文章
   if (req.method === 'POST') {
-    if (!checkAuth(req)) return res.status(401).json({ error: '未授权' });
     const { title, content, id: providedId } = req.body || {}; // Allow providing an ID
     if (!title || !content) return res.status(400).json({ error: '缺少标题或内容' });
     const id = providedId || Date.now().toString(); // Use provided ID or generate a new one
@@ -64,7 +55,6 @@ export default async function handler(req, res) {
 
   // 删除文章
   if (req.method === 'DELETE') {
-    if (!checkAuth(req)) return res.status(401).json({ error: '未授权' });
     const id = req.url.split('/').pop();
     if (!id) return res.status(400).json({ error: '缺少id' });
     await fs.rm(path.join(BLOG_DIR, id + '.json'), { force: true });

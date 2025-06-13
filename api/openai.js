@@ -14,12 +14,6 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
   }
-  const auth = req.headers.authorization || '';
-  const token = auth.replace(/^Bearer\s+/i, '');
-  if (!token || String(token) !== process.env.AUTH_PASSWORD) {
-    res.status(401).json({ error: '未授权，请先登录' });
-    return;
-  }
 
   // Per the user's example, we expect a conversational history.
   // The standard parameter name is `messages`, which we'll use.

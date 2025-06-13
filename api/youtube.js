@@ -8,13 +8,6 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
   }
-  // 简单认证
-  const auth = req.headers.authorization || '';
-  const token = auth.replace(/^Bearer\s+/i, '');
-  if (!token || String(token) !== process.env.AUTH_PASSWORD) {
-    res.status(401).json({ error: '未授权，请先登录' });
-    return;
-  }
 
   const { url, prompt, model } = req.body || {};
   if (!url || !prompt || !model) {

@@ -15,19 +15,12 @@ ytForm.addEventListener('submit', async (e) => {
   ytOutput.innerHTML = '⏳ 正在生成...';
   ytGenerate.disabled = true;
 
-  const authToken = localStorage.getItem('authToken') || '';
-  if (!authToken) {
-    ytOutput.innerHTML = '请先登录后再操作';
-    ytGenerate.disabled = false;
-    return;
-  }
 
   try {
     const res = await fetch('/api/youtube', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + authToken
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         url: ytUrl.value.trim(),
@@ -92,11 +85,6 @@ const ytBtnCreateBlog = document.getElementById('yt-btn-create-blog');
 
 if (ytBtnCreateBlog) {
   ytBtnCreateBlog.addEventListener('click', async () => {
-    const authToken = localStorage.getItem('authToken') || '';
-    if (!authToken) {
-      alert('请先登录后再操作');
-      return;
-    }
     const title = ytBlogTitle.value.trim();
     if (!title) {
       alert('请输入博客标题');
@@ -115,8 +103,7 @@ if (ytBtnCreateBlog) {
       const res = await fetch('/api/blog', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + authToken
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ title, content, createdAt })
       });

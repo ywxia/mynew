@@ -464,9 +464,13 @@ button:active:not(:disabled) {
 
 .blog-icons {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.blog-icon-row {
+  display: flex;
   gap: 0.5em;
-  flex-shrink: 0;
 }
 
 .blog-title-text {
@@ -488,7 +492,8 @@ button:active:not(:disabled) {
 
 .blog-delete-icon,
 .blog-copy-icon,
-.blog-ai-icon {
+.blog-ai-icon,
+.blog-edit-icon {
   background: none;
   border: none;
   cursor: pointer;
@@ -521,6 +526,15 @@ button:active:not(:disabled) {
 }
 .blog-ai-icon:hover {
   color: #218838;
+  background: none;
+  transform: scale(1.1);
+}
+
+.blog-edit-icon {
+  color: #ffc107;
+}
+.blog-edit-icon:hover {
+  color: #e0a800;
   background: none;
   transform: scale(1.1);
 }
@@ -675,6 +689,51 @@ button:active:not(:disabled) {
 }
 
 /* 响应式调整 */
+/* Page 3: Blog Editor Styles */
+.blog-editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.editor-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  font-weight: 500;
+}
+
+.editor-label input,
+.editor-label textarea {
+  width: 100%;
+  font-size: 1em; /* Ensure consistent font size */
+  padding: 0.8em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+}
+
+#blog-title {
+  height: auto;
+  min-height: 3em;
+  resize: vertical;
+  font-weight: bold;
+  font-size: 1.2em;
+  line-height: 1.4;
+}
+
+#blog-content {
+  min-height: 40vh; /* Use viewport height for better responsiveness */
+  resize: vertical;
+}
+
+.btn-submit {
+  align-self: flex-start; /* Align button to the left */
+  padding: 0.8em 2em;
+  font-size: 1em;
+}
+
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: row; /* 保持在移动端也为横向排列 */

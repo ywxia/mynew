@@ -9,7 +9,8 @@ const routes = {
 };
 
 function getPage() {
-  return location.hash.replace('#', '') || 'home';
+  // Handles both #page and #/page formats
+  return location.hash.replace(/^#\/?/, '') || 'home';
 }
 
 async function loadPage(page) {
@@ -31,4 +32,3 @@ async function loadPage(page) {
 
 window.addEventListener('hashchange', () => loadPage(getPage()));
 window.addEventListener('DOMContentLoaded', () => loadPage(getPage()));
-

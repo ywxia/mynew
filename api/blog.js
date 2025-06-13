@@ -21,9 +21,9 @@ export default async function handler(req, res) {
   // 新增文章
   if (req.method === 'POST') {
     if (!checkAuth(req)) return res.status(401).json({ error: '未授权' });
-    const { title, content } = req.body || {};
+    const { title, content, id: providedId } = req.body || {}; // Allow providing an ID
     if (!title || !content) return res.status(400).json({ error: '缺少标题或内容' });
-    const id = Date.now().toString();
+    const id = providedId || Date.now().toString(); // Use provided ID or generate a new one
     const createdAt = new Date().toISOString(); // 添加创建时间
     await fs.writeFile(
       path.join(BLOG_DIR, id + '.json'),

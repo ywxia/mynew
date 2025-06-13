@@ -1,17 +1,17 @@
 <header>
   <h1>写博客</h1>
 </header>
-<main>
-  <form id="blog-form" style="display:flex;flex-direction:column;gap:1em;max-width:700px;margin:0 auto;">
-    <label>
-      博客标题：
-      <input id="blog-title" type="text" required style="width:100%;" />
+<main class="page3-main">
+  <form id="blog-form" class="blog-editor-form">
+    <label class="editor-label">
+      <span>博客标题：</span>
+      <textarea id="blog-title" required rows="2"></textarea>
     </label>
-    <label>
-      博客内容：
-      <textarea id="blog-content" placeholder="支持 Markdown 格式" required style="width:100%;height:200px;"></textarea>
+    <label class="editor-label">
+      <span>博客内容：</span>
+      <textarea id="blog-content" placeholder="支持 Markdown 格式" required></textarea>
     </label>
-    <button id="blog-create" type="submit">创建博客</button>
+    <button id="blog-create" type="submit" class="btn-submit">创建博客</button>
   </form>
 </main>
 <footer>

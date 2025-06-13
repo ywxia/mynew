@@ -75,10 +75,16 @@ app.post('/api/openai', async (req, res) => {
   return openaiHandler(req, res);
 });
 
-app.use('/api/blog', async (req, res, next) => {
-  const { default: blogHandler } = await import('./api/blog.js');
-  return blogHandler(req, res, next);
-});
+// Blog API routes
+const blogHandler = async (req, res) => {
+  const { default: handler } = await import('./api/blog.js');
+  return handler(req, res);
+};
+
+app.get('/api/blog', blogHandler);
+app.post('/api/blog', blogHandler);
+app.put('/api/blog/:id', blogHandler);
+app.delete('/api/blog/:id', blogHandler);
 
 const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)

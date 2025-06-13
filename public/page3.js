@@ -6,6 +6,25 @@ export default function initPage3() {
 
   if (!form) return;
 
+  let editingBlogId = null;
+
+  // Check for blog to edit when page loads
+  const blogToEditData = localStorage.getItem('blogToEdit');
+  if (blogToEditData) {
+    try {
+      const blogToEdit = JSON.parse(blogToEditData);
+      titleInput.value = blogToEdit.title;
+      contentInput.value = blogToEdit.content;
+      editingBlogId = blogToEdit.id;
+      submitBtn.textContent = '保存更改';
+      // Clean up local storage immediately after use
+      localStorage.removeItem('blogToEdit');
+    } catch (e) {
+      console.error("Failed to parse blog data from localStorage", e);
+      localStorage.removeItem('blogToEdit');
+    }
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem('authToken') || '';
@@ -19,36 +38,66 @@ export default function initPage3() {
       alert('请输入标题和内容');
       return;
     }
-    submitBtn.textContent = '创建中...';
+
+    const isEditing = !!editingBlogId;
+    submitBtn.textContent = isEditing ? '保存中...' : '创建中...';
     submitBtn.disabled = true;
+
     try {
-      const createdAt = new Date().toISOString();
-      const res = await fetch('/api/blog', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + authToken
-        },
-        body: JSON.stringify({ title, content, createdAt })
-      });
-      if (!res.ok) {
-        let msg = '创建失败';
-        try {
-          const data = await res.json();
-          msg = data.error || msg;
-        } catch {
-          msg = await res.text();
+      if (isEditing) {
+        // Step 1: Delete the old file
+        const deleteRes = await fetch(`/api/blog/${encodeURIComponent(editingBlogId)}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+
+        if (!deleteRes.ok) {
+          const data = await deleteRes.json().catch(() => ({ error: '删除旧文件失败' }));
+          throw new Error(data.error);
         }
-        alert(msg);
+
+        // Step 2: Create a new file with the same ID
+        const createRes = await fetch('/api/blog', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          },
+          body: JSON.stringify({ id: editingBlogId, title, content })
+        });
+
+        if (!createRes.ok) {
+          const data = await createRes.json().catch(() => ({ error: '创建新文件失败' }));
+          throw new Error(data.error);
+        }
+        
+        alert('博客已成功保存！');
+        window.location.hash = 'page1';
+
       } else {
+        // Original create logic
+        const res = await fetch('/api/blog', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          },
+          body: JSON.stringify({ title, content })
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: '创建失败' }));
+          throw new Error(data.error);
+        }
+
         alert('博客已创建，可在“博客文章”页面查看');
         titleInput.value = '';
         contentInput.value = '';
       }
     } catch (err) {
-      alert('创建失败: ' + err.message);
+      alert('操作失败: ' + err.message);
     } finally {
-      submitBtn.textContent = '创建博客';
+      submitBtn.textContent = isEditing ? '保存更改' : '创建博客';
       submitBtn.disabled = false;
     }
   });

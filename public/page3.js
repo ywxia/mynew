@@ -29,7 +29,7 @@ export default function initPage3() {
     e.preventDefault();
     const authToken = localStorage.getItem('authToken') || '';
     if (!authToken) {
-      alert('请先在“身份验证”页面登录');
+      alert('请先登录后再操作');
       return;
     }
     const title = titleInput.value.trim();

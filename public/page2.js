@@ -17,7 +17,7 @@ ytForm.addEventListener('submit', async (e) => {
 
   const authToken = localStorage.getItem('authToken') || '';
   if (!authToken) {
-    ytOutput.innerHTML = '请先在“身份验证”页面登录';
+    ytOutput.innerHTML = '请先登录后再操作';
     ytGenerate.disabled = false;
     return;
   }
@@ -94,7 +94,7 @@ if (ytBtnCreateBlog) {
   ytBtnCreateBlog.addEventListener('click', async () => {
     const authToken = localStorage.getItem('authToken') || '';
     if (!authToken) {
-      alert('请先在“身份验证”页面登录');
+      alert('请先登录后再操作');
       return;
     }
     const title = ytBlogTitle.value.trim();

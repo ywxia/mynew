@@ -717,9 +717,12 @@ button:active:not(:disabled) {
   height: auto;
   min-height: 3em;
   resize: vertical;
-  font-weight: bold;
   font-size: 1.2em;
   line-height: 1.4;
+}
+
+#blog-title::placeholder {
+  font-weight: normal;
 }
 
 #blog-content {

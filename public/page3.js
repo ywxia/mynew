@@ -1,10 +1,15 @@
-export default function initPage3() {
-  const form = document.getElementById('blog-form');
-  const titleInput = document.getElementById('blog-title');
-  const contentInput = document.getElementById('blog-content');
-  const submitBtn = document.getElementById('blog-create');
-
+export default function initPage3(container) {
+  let form = container.querySelector('#blog-form');
   if (!form) return;
+
+  // Clone the form and replace it to remove all old event listeners
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+  form = newForm;
+
+  const titleInput = form.querySelector('#blog-title');
+  const contentInput = form.querySelector('#blog-content');
+  const submitBtn = form.querySelector('#blog-create');
 
   let editingBlogId = null;
 
@@ -30,7 +35,8 @@ export default function initPage3() {
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
     if (!title || !content) {
-      alert('请输入标题和内容');
+      console.error('Title or content is empty.');
+      // Silently return, or provide a non-blocking visual cue
       return;
     }
 
@@ -63,8 +69,10 @@ export default function initPage3() {
           const data = await createRes.json().catch(() => ({ error: '创建新文件失败' }));
           throw new Error(data.error);
         }
-        
-        alert('博客已成功保存！');
+        localStorage.setItem('refreshBlogList', 'true');
+        // Silently redirect after saving
+        titleInput.value = '';
+        contentInput.value = '';
         window.location.hash = 'page1';
 
       } else {
@@ -82,14 +90,19 @@ export default function initPage3() {
           throw new Error(data.error);
         }
 
-        alert('博客已创建，可在“博客文章”页面查看');
+        // Silently clear form after creation
         titleInput.value = '';
         contentInput.value = '';
+        // Optionally, redirect or give a subtle success indicator
+        localStorage.setItem('refreshBlogList', 'true');
+        window.location.hash = 'page1';
       }
     } catch (err) {
-      alert('操作失败: ' + err.message);
+      console.error('操作失败:', err);
     } finally {
-      submitBtn.textContent = isEditing ? '保存更改' : '创建博客';
+      // Reset state after any operation to prevent conflicts
+      editingBlogId = null;
+      submitBtn.textContent = '创建博客';
       submitBtn.disabled = false;
     }
   });

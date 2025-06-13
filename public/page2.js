@@ -1,12 +1,12 @@
 import { getYoutubeDefaultPrompt } from './utils/defaultPrompts.js';
 
-export default function initPage2() {
-const ytForm = document.getElementById('yt-form');
-const ytUrl = document.getElementById('yt-url');
-const ytPrompt = document.getElementById('yt-prompt');
-const ytModel = document.getElementById('yt-model');
-const ytOutput = document.getElementById('yt-output');
-const ytGenerate = document.getElementById('yt-generate');
+export default function initPage2(container) {
+const ytForm = container.querySelector('#yt-form');
+const ytUrl = container.querySelector('#yt-url');
+const ytPrompt = container.querySelector('#yt-prompt');
+const ytModel = container.querySelector('#yt-model');
+const ytOutput = container.querySelector('#yt-output');
+const ytGenerate = container.querySelector('#yt-generate');
 
 let rawMd = ''; // 保存原始markdown
 
@@ -57,8 +57,8 @@ ytForm.addEventListener('submit', async (e) => {
 });
 
 // 新增：复制和清空按钮功能
-const ytCopy = document.getElementById('yt-copy');
-const ytClear = document.getElementById('yt-clear');
+const ytCopy = container.querySelector('#yt-copy');
+const ytClear = container.querySelector('#yt-clear');
 
 if (ytCopy) {
   ytCopy.addEventListener('click', async () => {
@@ -80,20 +80,20 @@ if (ytClear) {
 }
 
 // 新增：创建博客功能
-const ytBlogTitle = document.getElementById('yt-blog-title');
-const ytBtnCreateBlog = document.getElementById('yt-btn-create-blog');
+const ytBlogTitle = container.querySelector('#yt-blog-title');
+const ytBtnCreateBlog = container.querySelector('#yt-btn-create-blog');
 
 if (ytBtnCreateBlog) {
   ytBtnCreateBlog.addEventListener('click', async () => {
     const title = ytBlogTitle.value.trim();
     if (!title) {
-      alert('请输入博客标题');
+      console.error('Blog title is empty.');
       ytBlogTitle.focus();
       return;
     }
     const content = rawMd;
     if (!content) {
-      alert('没有可保存的内容');
+      console.error('No content to save.');
       return;
     }
     ytBtnCreateBlog.textContent = '创建中...';
@@ -115,13 +115,14 @@ if (ytBtnCreateBlog) {
         } catch {
           msg = await res.text();
         }
-        alert(msg);
+        console.error('创建失败:', msg);
       } else {
-        alert('博客已创建，可在“博客文章”页面查看');
+        // Silently clear title after creation
         ytBlogTitle.value = '';
+        // Maybe provide a subtle success indicator here in the future
       }
     } catch (err) {
-      alert('创建失败: ' + err.message);
+      console.error('创建失败:', err);
     } finally {
       ytBtnCreateBlog.textContent = '创建博客';
       ytBtnCreateBlog.disabled = false;

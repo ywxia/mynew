@@ -1,35 +1,44 @@
 import { getDefaultPrompt } from './utils/defaultPrompts.js';
 
-export default function initHome() {
+export default function initHome(container) {
   console.log('initHome function is called.'); // 调试信息
 
-  const form = document.getElementById('fetch-form');
-  const urlInput = document.getElementById('url-input');
-  const btnFetch = document.getElementById('btn-fetch');
-  const btnCopy = document.getElementById('btn-copy');
-  const btnClear = document.getElementById('btn-clear');
-  const controls = document.getElementById('controls');
-  const output = document.getElementById('output');
-  const extraInput = document.getElementById('extra-input'); // 获取提示词输入框
-  const blogTitleInput = document.getElementById('blog-title');
-  const btnCreateBlog = document.getElementById('btn-create-blog');
-  const siteSelect = document.getElementById('site-select');
-  const btnOpenSite = document.getElementById('btn-open-site');
-  const btnAIClean = document.getElementById('btn-ai-clean');
-  const aiModelSelect = document.getElementById('ai-model');
-  const btnToggleRaw = document.getElementById('btn-toggle-raw');
+  const form = container.querySelector('#fetch-form');
+  const urlInput = container.querySelector('#url-input');
+  const btnFetch = container.querySelector('#btn-fetch');
+  const btnCopy = container.querySelector('#btn-copy');
+  const btnClear = container.querySelector('#btn-clear');
+  const controls = container.querySelector('#controls');
+  const output = container.querySelector('#output');
+  const extraInput = container.querySelector('#extra-input'); // 获取提示词输入框
+  const blogTitleInput = container.querySelector('#blog-title');
+  const btnCreateBlog = container.querySelector('#btn-create-blog');
+  const siteSelect = container.querySelector('#site-select');
+  const btnOpenSite = container.querySelector('#btn-open-site');
+  const btnAIClean = container.querySelector('#btn-ai-clean');
+  const aiModelSelect = container.querySelector('#ai-model');
+  const btnToggleRaw = container.querySelector('#btn-toggle-raw');
 
   let rawMarkdown = '';
   let aiResponses = [];
   let currentDisplayIndex = -1; // -1 for raw, 0 and up for AI responses
 
-  // Check for content passed from the blog page
-  const blogContent = localStorage.getItem('blogContentForAI');
-  if (blogContent) {
-    rawMarkdown = blogContent;
-    output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
-    controls.hidden = false;
-    localStorage.removeItem('blogContentForAI');
+  // Check for content passed from the blog page for AI conversation
+  const blogDataForAI = localStorage.getItem('blogForAI');
+  if (blogDataForAI) {
+    try {
+      const blog = JSON.parse(blogDataForAI);
+      rawMarkdown = blog.content;
+      output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
+      if (blogTitleInput) {
+        blogTitleInput.value = blog.title;
+      }
+      controls.hidden = false;
+    } catch (e) {
+      console.error('Failed to parse blog data for AI', e);
+    } finally {
+      localStorage.removeItem('blogForAI');
+    }
   }
 
   // 初始化提示词输入框
@@ -45,7 +54,8 @@ export default function initHome() {
   if (btnAIClean) {
     btnAIClean.addEventListener('click', async () => {
       if (!rawMarkdown) {
-        alert('请先获取网页内容');
+        console.error('No content to process with AI.');
+        // Optionally, provide a non-blocking visual cue
         return;
       }
       // If this is the first turn of a new conversation (based on raw markdown), clear previous AI responses.
@@ -58,6 +68,7 @@ export default function initHome() {
       try {
         const authToken = localStorage.getItem('authToken') || '';
         if (!authToken) {
+          console.error('Not logged in.');
           throw new Error('请先登录后再操作');
         }
         const extraPrompt = extraInput.value || '';
@@ -141,7 +152,8 @@ export default function initHome() {
       // 检查本地 token
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先登录后再操作');
+        console.error('Not logged in.');
+        // Optionally, provide a non-blocking visual cue
         return;
       }
       output.innerHTML = '⏳ 正在加载...';
@@ -150,7 +162,11 @@ export default function initHome() {
       try {
         // 直接把 https://example.com => https://example.com
         const rawUrl = urlInput.value.trim();
-        if (!rawUrl) throw new Error('URL 不能为空');
+        if (!rawUrl) {
+          console.error('URL is empty.');
+          // Optionally, provide a non-blocking visual cue
+          return;
+        }
 
         const res = await fetch('/api/fetch', {
           method: 'POST',
@@ -188,7 +204,7 @@ export default function initHome() {
     btnCopy.addEventListener('click', async () => {
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先登录后再操作');
+        console.error('Not logged in.');
         return;
       }
       try {
@@ -202,8 +218,8 @@ export default function initHome() {
         await navigator.clipboard.writeText(textToCopy);
         btnCopy.textContent = '已复制 ✅';
         setTimeout(() => (btnCopy.textContent = '复制文本'), 1500);
-      } catch {
-        alert('复制失败，请手动选择文本复制');
+      } catch (err) {
+        console.error('复制失败:', err);
       }
     });
   }
@@ -248,18 +264,18 @@ export default function initHome() {
     btnCreateBlog.addEventListener('click', async () => {
       const authToken = localStorage.getItem('authToken') || '';
       if (!authToken) {
-        alert('请先登录后再操作');
+        console.error('Not logged in.');
         return;
       }
       const title = blogTitleInput.value.trim();
       if (!title) {
-        alert('请输入博客标题');
+        console.error('Blog title is empty.');
         blogTitleInput.focus();
         return;
       }
       const content = currentDisplayIndex === -1 ? rawMarkdown : aiResponses[currentDisplayIndex];
       if (!content) {
-        alert('没有可保存的内容');
+        console.error('No content to save.');
         return;
       }
       btnCreateBlog.textContent = '创建中...';
@@ -282,13 +298,15 @@ export default function initHome() {
           } catch {
             msg = await res.text();
           }
-          alert(msg);
+          console.error('创建失败:', msg);
         } else {
-          alert('博客已创建，可在“博客文章”页面查看');
+          // Silently clear title after creation
           blogTitleInput.value = '';
+          localStorage.setItem('refreshBlogList', 'true');
+          // Maybe provide a subtle success indicator here in the future
         }
       } catch (err) {
-        alert('创建失败: ' + err.message);
+        console.error('创建失败:', err);
       } finally {
         btnCreateBlog.textContent = '创建博客';
         btnCreateBlog.disabled = false;

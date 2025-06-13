@@ -1,7 +1,14 @@
 import { formatDate } from './utils/dateFormat.js';
 
-export default function initPage1() {
-  const blogList = document.getElementById('blog-list');
+export default function initPage1(container) {
+  const blogList = container.querySelector('#blog-list');
+
+  if (!blogList) return;
+
+  // Check if a refresh is needed
+  if (localStorage.getItem('refreshBlogList')) {
+    localStorage.removeItem('refreshBlogList');
+  }
 
   async function fetchBlogs() {
     try {
@@ -80,7 +87,11 @@ export default function initPage1() {
 
       // Send to AI
       aiIcon.onclick = () => {
-        localStorage.setItem('blogContentForAI', blog.content);
+        const blogForAI = {
+          title: blog.title,
+          content: blog.content
+        };
+        localStorage.setItem('blogForAI', JSON.stringify(blogForAI));
         window.location.hash = 'home';
       };
 
@@ -92,7 +103,7 @@ export default function initPage1() {
           copyIcon.textContent = '✅';
           setTimeout(() => (copyIcon.textContent = '📋'), 1500);
         } catch (err) {
-          alert('复制失败');
+          console.error('复制失败:', err);
         }
       };
 
@@ -126,12 +137,19 @@ export default function initPage1() {
 
       // 删除
       deleteIcon.onclick = async () => {
-        if (!confirm('确定要删除这篇文章吗？')) return;
-        const res = await fetch(`/api/blog/${encodeURIComponent(blog.id)}`, {
-          method: 'DELETE'
-        });
-        if (res.ok) fetchBlogs();
-        else alert('删除失败');
+        // Removing confirm dialog per user request
+        try {
+          const res = await fetch(`/api/blog/${encodeURIComponent(blog.id)}`, {
+            method: 'DELETE'
+          });
+          if (res.ok) {
+            fetchBlogs();
+          } else {
+            console.error('删除失败:', await res.text());
+          }
+        } catch (err) {
+          console.error('删除请求失败:', err);
+        }
       };
       blogList.appendChild(block);
     });

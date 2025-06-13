@@ -23,6 +23,15 @@ export default function initHome() {
   let aiResponses = [];
   let currentDisplayIndex = -1; // -1 for raw, 0 and up for AI responses
 
+  // Check for content passed from the blog page
+  const blogContent = localStorage.getItem('blogContentForAI');
+  if (blogContent) {
+    rawMarkdown = blogContent;
+    output.innerHTML = window.marked ? window.marked.parse(rawMarkdown) : rawMarkdown;
+    controls.hidden = false;
+    localStorage.removeItem('blogContentForAI');
+  }
+
   // 初始化提示词输入框
   if (extraInput) {
     const defaultPromptText = getDefaultPrompt();

@@ -83,9 +83,7 @@ button:hover:not(:disabled) {
   /* transform: translateY(-1px); */
 }
 
-button:active:not(:disabled) {
-  /* transform: translateY(0); */
-}
+
 
 #auth-section {
   display: flex;
@@ -461,6 +459,7 @@ button:active:not(:disabled) {
   justify-content: space-between;
   align-items: center; /* 垂直居中对齐标题和删除按钮 */
   width: 100%;
+  gap: 0.5em;
 }
 
 .blog-icons {
@@ -488,7 +487,8 @@ button:active:not(:disabled) {
 }
 
 .blog-delete-icon,
-.blog-copy-icon {
+.blog-copy-icon,
+.blog-ai-icon {
   background: none;
   border: none;
   cursor: pointer;
@@ -512,6 +512,15 @@ button:active:not(:disabled) {
 }
 .blog-copy-icon:hover {
   color: #0056b3;
+  background: none;
+  transform: scale(1.1);
+}
+
+.blog-ai-icon {
+  color: #28a745;
+}
+.blog-ai-icon:hover {
+  color: #218838;
   background: none;
   transform: scale(1.1);
 }

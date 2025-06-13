@@ -45,6 +45,7 @@ export default function initPage1() {
         <div class="blog-title-header">
           <span class="blog-title-text">${blog.title}</span>
           <div class="blog-icons">
+            <button class="blog-ai-icon">🤖</button>
             <button class="blog-copy-icon">📋</button>
             <button class="blog-delete-icon">🗑️</button>
           </div>
@@ -61,6 +62,13 @@ export default function initPage1() {
 
       const deleteIcon = titleDiv.querySelector('.blog-delete-icon');
       const copyIcon = titleDiv.querySelector('.blog-copy-icon');
+      const aiIcon = titleDiv.querySelector('.blog-ai-icon');
+
+      // Send to AI
+      aiIcon.onclick = () => {
+        localStorage.setItem('blogContentForAI', blog.content);
+        window.location.hash = '/';
+      };
 
       // 复制
       copyIcon.onclick = async () => {

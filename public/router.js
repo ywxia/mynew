@@ -1,4 +1,16 @@
 const app = document.getElementById('app');
+const navbar = document.querySelector('.navbar');
+const loginLink = document.querySelector('.nav-login');
+
+function isAuthed() {
+  return !!localStorage.getItem('authToken');
+}
+
+function toggleNavbar(show) {
+  if (navbar) {
+    navbar.style.display = show ? '' : 'none';
+  }
+}
 
 const routes = {
   home: { path: 'pages/home.html', script: './main.js' },
@@ -14,6 +26,21 @@ function getPage() {
 }
 
 async function loadPage(page) {
+  // If not authenticated, always redirect to login page
+  if (!isAuthed() && page !== 'login') {
+    page = 'login';
+    if (location.hash !== '#login') {
+      location.hash = '#login';
+    }
+  }
+
+  // Toggle navbar visibility based on auth state
+  const authed = isAuthed();
+  toggleNavbar(authed);
+  if (authed && loginLink) {
+    loginLink.style.display = 'none';
+  }
+
   const route = routes[page] || routes.home;
   const res = await fetch(route.path);
   const html = await res.text();

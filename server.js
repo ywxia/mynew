@@ -88,13 +88,14 @@ app.delete('/api/blog/:id', blogHandler);
 
 // Notion API routes
 app.get('/api/notion/pages', async (req, res) => {
-  try {
-    const { getSelectablePages } = await import(`./api/notion.js?t=${Date.now()}`);
-    const pages = getSelectablePages();
-    res.json(pages);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch Notion pages.' });
-  }
+  // Directly return the environment variable for debugging
+  const pageListValue = process.env.NOTION_PAGE_LIST;
+  res.json({
+    message: "Debug output for NOTION_PAGE_LIST",
+    value: pageListValue,
+    type: typeof pageListValue,
+    isDefined: pageListValue !== undefined
+  });
 });
 
 app.post('/api/notion/pages', async (req, res) => {

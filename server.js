@@ -93,6 +93,7 @@ app.get('/api/notion/pages', async (req, res) => {
     const pages = getSelectablePages();
     res.json(pages);
   } catch (error) {
+    console.error("ERROR in /api/notion/pages:", error);
     res.status(500).json({ error: 'Failed to fetch Notion pages.' });
   }
 });

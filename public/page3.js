@@ -13,6 +13,7 @@ export default function initPage3(container) {
   const notionBtn = form.querySelector('#add-to-notion');
   const openNotionBtn = form.querySelector('#open-notion-page');
   const notionPageSelect = form.querySelector('#notion-page-select');
+  const clearBtn = form.querySelector('#clear-form');
 
   let editingBlogId = null;
 
@@ -180,6 +181,8 @@ export default function initPage3(container) {
     } finally {
       notionBtn.textContent = '添加到 Notion';
       notionBtn.disabled = false;
+      editingBlogId = null;
+      submitBtn.textContent = '创建博客';
     }
   });
 
@@ -191,5 +194,15 @@ export default function initPage3(container) {
     } else {
       alert('请先选择一个 Notion 页面！');
     }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    titleInput.value = '';
+    contentInput.value = '';
+    editingBlogId = null;
+    submitBtn.textContent = '创建博客';
+    submitBtn.disabled = false;
+    notionBtn.textContent = '添加到 Notion';
+    notionBtn.disabled = false;
   });
 }

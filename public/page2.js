@@ -119,7 +119,9 @@ if (ytBtnCreateBlog) {
       } else {
         // Silently clear title after creation
         ytBlogTitle.value = '';
-        // Maybe provide a subtle success indicator here in the future
+        // Set flag and navigate to page1 to see the new blog
+        localStorage.setItem('refreshBlogList', 'true');
+        window.location.hash = 'page1';
       }
     } catch (err) {
       console.error('创建失败:', err);

@@ -10,8 +10,40 @@ export default function initPage3(container) {
   const titleInput = form.querySelector('#blog-title');
   const contentInput = form.querySelector('#blog-content');
   const submitBtn = form.querySelector('#blog-create');
+  const notionBtn = form.querySelector('#add-to-notion');
+  const openNotionBtn = form.querySelector('#open-notion-page');
+  const notionPageSelect = form.querySelector('#notion-page-select');
 
   let editingBlogId = null;
+
+  async function loadNotionPages() {
+    try {
+      const res = await fetch('/api/notion/pages');
+      if (!res.ok) {
+        throw new Error('Failed to load Notion pages');
+      }
+      const pages = await res.json();
+      
+      notionPageSelect.innerHTML = ''; // Clear loading option
+      if (pages.length === 0) {
+        notionPageSelect.innerHTML = '<option value="">无可用页面</option>';
+        return;
+      }
+
+      pages.forEach(page => {
+        const option = document.createElement('option');
+        option.value = page.id;
+        option.textContent = page.title;
+        notionPageSelect.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error(error);
+      notionPageSelect.innerHTML = '<option value="">加载失败</option>';
+    }
+  }
+
+  loadNotionPages();
 
   // Check for blog to edit when page loads
   const blogToEditData = localStorage.getItem('blogToEdit');
@@ -104,6 +136,60 @@ export default function initPage3(container) {
       editingBlogId = null;
       submitBtn.textContent = '创建博客';
       submitBtn.disabled = false;
+    }
+  });
+
+  notionBtn.addEventListener('click', async () => {
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    const parentId = notionPageSelect.value;
+
+    if (!title || !content) {
+      alert('标题和内容不能为空！');
+      return;
+    }
+    if (!parentId) {
+      alert('请选择一个 Notion 页面！');
+      return;
+    }
+
+    notionBtn.textContent = '添加中...';
+    notionBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/notion/pages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, markdownContent: content, parentId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: '添加到 Notion 失败' }));
+        throw new Error(data.error);
+      }
+
+      alert('成功添加到 Notion！');
+      titleInput.value = '';
+      contentInput.value = '';
+
+    } catch (err) {
+      console.error('添加到 Notion 失败:', err);
+      alert(`添加到 Notion 失败: ${err.message}`);
+    } finally {
+      notionBtn.textContent = '添加到 Notion';
+      notionBtn.disabled = false;
+    }
+  });
+
+  openNotionBtn.addEventListener('click', () => {
+    const pageId = notionPageSelect.value;
+    if (pageId) {
+      const url = `https://www.notion.so/${pageId.replace(/-/g, '')}`;
+      window.open(url, '_blank');
+    } else {
+      alert('请先选择一个 Notion 页面！');
     }
   });
 }

@@ -86,6 +86,36 @@ app.post('/api/blog', blogHandler);
 app.put('/api/blog/:id', blogHandler);
 app.delete('/api/blog/:id', blogHandler);
 
+// Notion API routes
+app.get('/api/notion/pages', async (req, res) => {
+  try {
+    const { getSelectablePages } = await import(`./api/notion.js?t=${Date.now()}`);
+    const pages = getSelectablePages();
+    res.json(pages);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Notion pages.' });
+  }
+});
+
+app.post('/api/notion/pages', async (req, res) => {
+  try {
+    const { createNotionPageFromMarkdown } = await import(`./api/notion.js?t=${Date.now()}`);
+    const { title, markdownContent, parentId } = req.body;
+
+    if (!title || !markdownContent || !parentId) {
+      return res.status(400).json({ error: 'Title, markdownContent, and parentId are required.' });
+    }
+
+    const newPage = await createNotionPageFromMarkdown({ title, markdownContent, parentId });
+    res.status(201).json({ message: 'Successfully created page in Notion!', page: newPage });
+  } catch (error) {
+    console.error('Failed to add to Notion:', error.body || error);
+    const errorMessage = error.body ? JSON.parse(error.body).message : 'Failed to create page in Notion.';
+    res.status(500).json({ error: errorMessage });
+  }
+});
+
+
 const server = app.listen(PORT, () =>
   console.log(`✔️  jina-reader-app listening on http://localhost:${PORT}`)
 );

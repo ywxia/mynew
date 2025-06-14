@@ -11,7 +11,17 @@
       <span>博客内容：</span>
       <textarea id="blog-content" placeholder="支持 Markdown 格式" required></textarea>
     </label>
-    <button id="blog-create" type="submit" class="btn-submit">创建博客</button>
+    <label class="editor-label">
+      <span>选择 Notion 页面：</span>
+      <select id="notion-page-select" required>
+        <option value="">加载中...</option>
+      </select>
+    </label>
+    <div class="button-group">
+      <button id="blog-create" type="submit" class="btn-submit">创建博客</button>
+      <button id="add-to-notion" type="button" class="btn-submit">添加到 Notion</button>
+      <button id="open-notion-page" type="button" class="btn-submit">打开 Notion 页面</button>
+    </div>
   </form>
 </main>
 <footer>

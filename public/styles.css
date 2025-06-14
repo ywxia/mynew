@@ -868,3 +868,11 @@ button:active:not(:disabled) {
   width: 32px;
   height: 32px;
 }
+
+/* Button Group for Page 3 */
+.button-group {
+  display: flex;
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  gap: 1em; /* Space between buttons */
+  margin-top: 1em; /* Space above the button group */
+}

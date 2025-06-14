@@ -24,18 +24,18 @@
         <button id="yt-generate" type="submit">生成输出</button>
       </form>
       <section id="yt-output-section" style="margin-top:1.5em;">
-        <label for="yt-output" class="extra-label">输出结果：</label>
-        <div style="overflow:auto;max-width:100%;">
-          <div id="yt-output" style="min-height:120px;background:#f9fbfe;padding:1em;border-radius:0.6em;border:1px solid #e0e6ed;overflow:auto;max-width:100%;word-break:break-all;"></div>
-        </div>
-        <div style="margin-top:1em;display:flex;gap:1em;">
+        <div style="margin-bottom:1em; display:flex; flex-wrap: wrap; gap:1em; align-items: center;">
           <button id="yt-copy" type="button">复制</button>
           <button id="yt-clear" type="button">清空</button>
+          <!-- 创建博客控件 -->
+          <div class="blog-creation-controls" style="display:flex; gap: 0.7em; align-items: center;">
+            <input id="yt-blog-title" type="text" placeholder="博客标题" class="blog-title-input" />
+            <button id="yt-btn-create-blog" type="button">创建博客</button>
+          </div>
         </div>
-        <!-- 新增：创建博客控件 -->
-        <div class="blog-creation-controls" style="margin-top:1.5em;">
-          <input id="yt-blog-title" type="text" placeholder="博客标题" class="blog-title-input" />
-          <button id="yt-btn-create-blog" type="button">创建博客</button>
+        <label for="yt-output" class="extra-label" style="display:block; margin-bottom:0.5em; font-weight:500;">输出结果：</label>
+        <div style="overflow:auto;max-width:100%;">
+          <div id="yt-output" style="min-height:120px;background:#f9fbfe;padding:1em;border-radius:0.6em;border:1px solid #e0e6ed;overflow:auto;max-width:100%;word-break:break-all;"></div>
         </div>
       </section>
     </main>

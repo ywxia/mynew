@@ -176,6 +176,7 @@ function mdToBlocks(md) {
 function getSelectablePages() {
     const pageListString = process.env.NOTION_PAGE_LIST;
     if (!pageListString) {
+        console.warn("[Notion Module] WARNING: NOTION_PAGE_LIST environment variable not found or is empty. Check your .env file and PM2 configuration.");
         return [];
     }
 

@@ -3,10 +3,7 @@ dotenv.config();
 
 import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
 
-const ALLOWED_MODELS = [
-  'gemini-2.5-pro-preview-06-05',
-  'gemini-2.5-flash-preview-05-20'
-];
+const ALLOWED_MODELS = (process.env.GEMINI_ALLOWED_MODELS || '').split(',').filter(Boolean);
 const DEFAULT_MODEL = ALLOWED_MODELS[0];
 
 export default async function handler(req, res) {

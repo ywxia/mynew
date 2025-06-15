@@ -79,6 +79,15 @@ app.post('/api/openai', async (req, res) => {
   return openaiHandler(req, res);
 });
 
+app.get('/api/models', (req, res) => {
+  const geminiModels = (process.env.GEMINI_ALLOWED_MODELS || '').split(',').filter(Boolean);
+  const openaiModels = (process.env.OPENAI_ALLOWED_MODELS || '').split(',').filter(Boolean);
+  res.json({
+    gemini: geminiModels,
+    openai: openaiModels,
+  });
+});
+
 // Blog API routes
 const blogHandler = async (req, res) => {
   const { default: handler } = await import('./api/blog.js');

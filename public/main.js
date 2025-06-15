@@ -23,6 +23,42 @@ export default function initHome(container) {
   let aiResponses = [];
   let currentDisplayIndex = -1; // -1 for raw, 0 and up for AI responses
 
+  async function loadModels() {
+    try {
+      const response = await fetch('/api/models');
+      if (!response.ok) {
+        throw new Error('无法加载模型列表');
+      }
+      const models = await response.json();
+      
+      aiModelSelect.innerHTML = ''; // 清空现有选项
+
+      const geminiModels = models.gemini || [];
+      geminiModels.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        const displayName = model.split('-').slice(0, 2).join(' ') + ' ' + model.split('-').slice(2, -1).join(' ');
+        option.textContent = "Gemini " + displayName.replace(/\b\w/g, l => l.toUpperCase());
+        aiModelSelect.appendChild(option);
+      });
+
+      const openaiModels = models.openai || [];
+      openaiModels.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = "OpenAI " + model.toUpperCase();
+        aiModelSelect.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('加载模型失败:', error);
+      aiModelSelect.innerHTML = '<option>加载模型失败</option>';
+      aiModelSelect.disabled = true;
+    }
+  }
+
+  loadModels();
+
   // Check for content passed from the blog page for AI conversation
   const blogDataForAI = localStorage.getItem('blogForAI');
   if (blogDataForAI) {
@@ -58,11 +94,7 @@ export default function initHome(container) {
         // Optionally, provide a non-blocking visual cue
         return;
       }
-      // If this is the first turn of a new conversation (based on raw markdown), clear previous AI responses.
-      if (currentDisplayIndex === -1) {
-        aiResponses = [];
-      }
-
+      
       btnAIClean.textContent = 'AI处理中...';
       btnAIClean.disabled = true;
       try {

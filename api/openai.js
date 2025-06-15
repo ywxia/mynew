@@ -3,10 +3,7 @@ dotenv.config();
 
 import OpenAI from 'openai';
 
-const ALLOWED_MODELS = [
-  'gpt-4.1',
-  'gpt-4.1-mini'
-];
+const ALLOWED_MODELS = (process.env.OPENAI_ALLOWED_MODELS || '').split(',').filter(Boolean);
 const DEFAULT_MODEL = ALLOWED_MODELS[0];
 
 export default async function handler(req, res) {

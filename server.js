@@ -32,8 +32,12 @@ app.post('/api/fetch', async (req, res) => {
     const response = await fetch(target, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${process.env.JINA_API_KEY}`,
-        'X-Return-Format': 'markdown'
+        'Authorization': `Bearer ${process.env.JINA_API_KEY}`,
+        'Accept': 'application/json',
+        'X-Target-Selector': 'article, .article, .article-body, [role="article"], [data-testid="ArticleBody"]',
+        'X-Return-Format': 'markdown',
+        'X-No-Cache': 'true',
+        'X-Retain-Images': 'none'
       }
     });
 

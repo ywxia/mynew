@@ -727,8 +727,9 @@ button:active:not(:disabled) {
 }
 
 #blog-content {
-  min-height: 40vh; /* Use viewport height for better responsiveness */
+  min-height: 50vh; /* Use viewport height for better responsiveness */
   resize: vertical;
+  font-size: 1.1em;
 }
 
 .btn-submit {

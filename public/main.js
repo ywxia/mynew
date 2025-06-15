@@ -134,11 +134,30 @@ export default function initHome(container) {
           throw new Error(data.error || '请求失败');
         }
 
-        const aiText = await res.text();
+        let aiText = '';
+        // Per user request, revert Gemini to non-streaming, but keep OpenAI streaming
+        if (endpoint === '/api/gemini') {
+          aiText = await res.text();
+          output.innerHTML = window.marked ? window.marked.parse(aiText) : aiText;
+        } else {
+          // Streaming for OpenAI
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          output.innerHTML = ''; // Clear output for new content
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            aiText += decoder.decode(value, { stream: true });
+            output.innerHTML = window.marked ? window.marked.parse(aiText) : aiText;
+          }
+        }
+
         aiResponses.push(aiText);
         currentDisplayIndex = aiResponses.length - 1;
         
-        output.innerHTML = window.marked ? window.marked.parse(aiResponses[currentDisplayIndex]) : aiResponses[currentDisplayIndex];
         btnToggleRaw.style.display = 'inline-block';
         updateToggleText();
 

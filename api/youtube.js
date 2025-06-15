@@ -19,19 +19,31 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const genModel = genAI.getGenerativeModel({ model });
 
-    // 生成内容
-    const result = await genModel.generateContent([
+    // 设置流式响应头
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.writeHead(200);
+
+    // 使用流式生成内容
+    const result = await genModel.generateContentStream([
       prompt,
       {
         fileData: {
           fileUri: url,
+          mimeType: 'video/*', // 根据官方示例，最好指定 mimeType
         },
       },
     ]);
-    const text = result.response.text();
 
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.status(200).end(text);
+    // 将数据块写入响应流
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      if (chunkText) {
+        res.write(chunkText);
+      }
+    }
+
+    // 结束响应
+    res.end();
   } catch (err) {
     // 增加详细日志和友好提示
     console.error('[YouTube Gemini Error]', err);

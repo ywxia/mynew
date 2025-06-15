@@ -19,40 +19,37 @@ export default async function handler(req, res) {
   }
 
   try {
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
-    const config = {
-      temperature: 0.9,
-      safetySettings: [
-        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-      ],
-      responseMimeType: 'text/plain',
-    };
+    const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
     const useModel = ALLOWED_MODELS.includes(model) ? model : DEFAULT_MODEL;
     
+    // For text-only input, use the gemini-pro model
+    const geminiModel = ai.getGenerativeModel({ model: useModel });
+
     // Transform messages to Gemini's `contents` format
+    // The user's last message is the prompt
+    const lastMessage = messages.pop();
     const contents = messages.map(msg => ({
-      // Gemini uses 'model' for the assistant's role
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
     }));
 
-    const response = await ai.models.generateContentStream({
-      model: useModel,
-      config,
-      contents,
+    const chat = geminiModel.startChat({
+      history: contents,
+      generationConfig: {
+        temperature: 0.9,
+      },
     });
 
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    let result = '';
-    for await (const chunk of response) {
-      result += chunk.text || '';
+    const result = await chat.sendMessageStream(lastMessage.content);
+
+    let resultText = '';
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      resultText += chunkText;
     }
-    res.status(200).end(result);
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.status(200).send(resultText);
   } catch (err) {
     console.error('[Gemini API Error]', err, err.cause);
     if (!res.headersSent) {

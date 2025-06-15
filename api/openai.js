@@ -31,19 +31,26 @@ export default async function handler(req, res) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const useModel = ALLOWED_MODELS.includes(model) ? model : DEFAULT_MODEL;
 
-    // The user's example uses a non-existent `openai.responses.create` and is non-streaming.
-    // We will use the correct `openai.chat.completions.create` method and make a non-streaming call.
-    const response = await openai.chat.completions.create({
+    // Use streaming response
+    const stream = await openai.chat.completions.create({
       model: useModel,
       messages: transformedMessages,
       temperature: 1,
-      max_tokens: 2048, // Corresponds to max_output_tokens
+      max_tokens: 2048,
       top_p: 1,
+      stream: true,
     });
 
-    const result = response.choices[0]?.message?.content;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.status(200).send(result);
+    res.writeHead(200);
+
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || '';
+      if (content) {
+        res.write(content);
+      }
+    }
+    res.end();
 
   } catch (err) {
     console.error('[OpenAI API Error]', err);

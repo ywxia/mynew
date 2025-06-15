@@ -79,10 +79,21 @@ export default function initPage2(container) {
         return;
       }
 
-      // 只用一次性读取
-      const md = await res.text();
-      ytOutput.innerHTML = window.marked ? window.marked.parse(md) : md;
-      rawMd = md;
+      // 使用流式读取
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let md = '';
+      ytOutput.innerHTML = ''; // 清空之前的内容
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        md += decoder.decode(value, { stream: true });
+        ytOutput.innerHTML = window.marked ? window.marked.parse(md) : md;
+        rawMd = md; // 持续更新原始 markdown
+      }
     } catch (err) {
       ytOutput.innerHTML = '❌ ' + err.message;
       rawMd = '';
